@@ -56,6 +56,7 @@ def get_expense_by_id(expense_id):
 
     return None
 
+
 def update_expense(expense_id, data):
     expenses = load_expenses()
 
@@ -68,3 +69,31 @@ def update_expense(expense_id, data):
             break
 
     save_expenses(expenses)
+
+
+def generate_insights():
+    expenses = load_expenses()
+
+    if not expenses:
+        return ["No data available"]
+
+    total = sum(e["amount"] for e in expenses)
+
+    category_totals = {}
+
+    for e in expenses:
+        cat = e["category"]
+        category_totals[cat] = category_totals.get(cat, 0) + e["amount"]
+
+    insights = []
+
+    
+    for cat, amt in category_totals.items():
+        percent = (amt / total) * 100
+        insights.append(f"{cat} accounts for {percent:.1f}% of your spending")
+
+    
+    max_cat = max(category_totals, key=category_totals.get)
+    insights.append(f"Your highest spending category is {max_cat}")
+
+    return insights

@@ -6,6 +6,7 @@ from services import (
     delete_expense,
     get_expense_by_id,
     update_expense,
+    generate_insights,
 )
 from datetime import datetime
 
@@ -17,7 +18,8 @@ app.config.from_object(Config)
 @app.route("/")
 def home():
     expenses = get_all_expenses()
-    return render_template("index.html", expenses=expenses)
+    insights = generate_insights()
+    return render_template("index.html", expenses=expenses, insights=insights)
 
 
 @app.route("/add-expense", methods=["POST"])
