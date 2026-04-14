@@ -7,6 +7,8 @@ from services import (
     get_expense_by_id,
     update_expense,
     generate_insights,
+    generate_advanced_insights,
+    generate_pie_chart,
 )
 from datetime import datetime
 
@@ -18,7 +20,10 @@ app.config.from_object(Config)
 @app.route("/")
 def home():
     expenses = get_all_expenses()
-    insights = generate_insights()
+    insights = generate_advanced_insights()
+
+    generate_pie_chart()
+
     return render_template("index.html", expenses=expenses, insights=insights)
 
 

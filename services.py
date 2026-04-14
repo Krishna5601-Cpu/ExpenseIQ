@@ -1,6 +1,10 @@
 import json
 import os
 import uuid
+import matplotlib.pyplot as plt
+from collections import defaultdict
+from datetime import datetime
+
 
 FILE_PATH = "expenses.json"
 
@@ -77,7 +81,90 @@ def generate_insights():
     if not expenses:
         return ["No data available"]
 
+    insights = []
+
+    # 🔥 Normalize + Prepare Data
+    total = 0
+    category_totals = defaultdict(int)
+    daily_totals = defaultdict(int)
+
+    for e in expenses:
+        amount = int(e["amount"])
+        category = e["category"].strip().lower()  # 🔥 normalize
+        date = e["date"]
+
+        total += amount
+        category_totals[category] += amount
+        daily_totals[date] += amount
+
+    # 🔥 Total Spending
+    insights.append(f"Total spending: ₹{total}")
+
+    # 🔥 Category Percentage
+    for cat, amt in category_totals.items():
+        percent = (amt / total) * 100
+        insights.append(f"{cat.title()} accounts for {percent:.1f}% of your spending")
+
+    # 🔥 Highest Spending Category
+    max_cat = max(category_totals, key=category_totals.get)
+    insights.append(f"Your highest spending category is {max_cat.title()}")
+
+    # 🔥 Average Daily Spending
+    avg_daily = total / len(daily_totals)
+    insights.append(f"Your average daily spending is ₹{avg_daily:.0f}")
+
+    # 🔥 Spending Trend (simple)
+    sorted_dates = sorted(daily_totals.keys())
+
+    if len(sorted_dates) >= 2:
+        first = daily_totals[sorted_dates[0]]
+        last = daily_totals[sorted_dates[-1]]
+
+        if last > first:
+            insights.append("Your spending trend is increasing 📈")
+        elif last < first:
+            insights.append("Your spending trend is decreasing 📉")
+        else:
+            insights.append("Your spending trend is stable")
+
+    return insights
+
+
+def generate_advanced_insights():
+    expenses = load_expenses()
+
+    if not expenses:
+        return ["No data available"]
+
     total = sum(e["amount"] for e in expenses)
+
+    category_totals = defaultdict(int)
+
+    for e in expenses:
+        category_totals[e["category"]] += e["amount"]
+
+    insights = []
+
+    # Total
+    insights.append(f"Total spending: ₹{total}")
+
+    # Category %
+    for cat, amt in category_totals.items():
+        percent = (amt / total) * 100
+        insights.append(f"{cat} accounts for {percent:.1f}%")
+
+    # Highest category
+    max_cat = max(category_totals, key=category_totals.get)
+    insights.append(f"Highest spending: {max_cat}")
+
+    return insights
+
+
+def generate_pie_chart():
+    expenses = load_expenses()
+
+    if not expenses:
+        return
 
     category_totals = {}
 
@@ -85,15 +172,13 @@ def generate_insights():
         cat = e["category"]
         category_totals[cat] = category_totals.get(cat, 0) + e["amount"]
 
-    insights = []
+    labels = list(category_totals.keys())
+    values = list(category_totals.values())
 
-    
-    for cat, amt in category_totals.items():
-        percent = (amt / total) * 100
-        insights.append(f"{cat} accounts for {percent:.1f}% of your spending")
+    plt.figure()
+    plt.pie(values, labels=labels, autopct="%1.1f%%")
 
-    
-    max_cat = max(category_totals, key=category_totals.get)
-    insights.append(f"Your highest spending category is {max_cat}")
+    plt.title("Expense Distribution")
 
-    return insights
+    plt.savefig("static/pie_chart.png")
+    plt.close()

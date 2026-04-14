@@ -99,6 +99,14 @@
           {% endfor %}
         </ul>
       </div>
+      <div class="max-w-4xl mx-auto mt-10 bg-white p-6 rounded-lg shadow">
+        <h2 class="text-xl font-semibold mb-4">📊 Expense Distribution</h2>
+
+        <img
+          src="{{ url_for('static', filename='pie_chart.png') }}"
+          class="mt-4 mx-auto w-80"
+        />
+      </div>
     </div>
   </body>
 </html>
