@@ -66,7 +66,14 @@
             <td class="p-2">{{ expense.category }}</td>
             <td class="p-2">{{ expense.description }}</td>
             <td class="p-2">{{ expense.date }}</td>
-            <td class="p-2">
+            <td class="p-2 space-x-2">
+              <a
+                href="/edit/{{ expense.id }}"
+                class="text-blue-500 hover:underline"
+              >
+                Edit
+              </a>
+
               <a
                 href="/delete/{{ expense.id }}"
                 class="text-red-500 hover:underline"

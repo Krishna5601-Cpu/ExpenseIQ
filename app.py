@@ -1,6 +1,12 @@
 from flask import Flask, request, jsonify, render_template, redirect
 from config import Config
-from services import add_expense, get_all_expenses, delete_expense
+from services import (
+    add_expense,
+    get_all_expenses,
+    delete_expense,
+    get_expense_by_id,
+    update_expense,
+)
 from datetime import datetime
 
 
@@ -31,6 +37,26 @@ def create_expense():
     add_expense(data)
 
     return redirect("/")
+
+
+@app.route("/update/<expense_id>", methods=["POST"])
+def update(expense_id):
+    data = {
+        "amount": int(request.form.get("amount")),
+        "category": request.form.get("category"),
+        "description": request.form.get("description"),
+        "date": request.form.get("date"),
+    }
+
+    update_expense(expense_id, data)
+
+    return redirect("/")
+
+
+@app.route("/edit/<expense_id>")
+def edit_page(expense_id):
+    expense = get_expense_by_id(expense_id)
+    return render_template("edit.html", expense=expense)
 
 
 @app.route("/delete/<expense_id>")

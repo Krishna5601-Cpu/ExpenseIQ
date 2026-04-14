@@ -45,3 +45,26 @@ def delete_expense(expense_id):
 
 def get_all_expenses():
     return load_expenses()
+
+
+def get_expense_by_id(expense_id):
+    expenses = load_expenses()
+
+    for expense in expenses:
+        if expense["id"] == expense_id:
+            return expense
+
+    return None
+
+def update_expense(expense_id, data):
+    expenses = load_expenses()
+
+    for expense in expenses:
+        if expense["id"] == expense_id:
+            expense["amount"] = data.get("amount")
+            expense["category"] = data.get("category")
+            expense["description"] = data.get("description")
+            expense["date"] = data.get("date")
+            break
+
+    save_expenses(expenses)
