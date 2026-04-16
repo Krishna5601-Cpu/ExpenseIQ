@@ -217,3 +217,19 @@ def generate_line_chart():
     path = os.path.join("static", "line_chart.png")
     plt.savefig(path)
     plt.close()
+
+
+BUDGET_FILE = "budgets.json"
+
+
+def load_budgets():
+    if not os.path.exists(BUDGET_FILE):
+        return {"overall": 0, "categories": {}}
+
+    with open(BUDGET_FILE, "r") as f:
+        return json.load(f)
+
+
+def save_budgets(data):
+    with open(BUDGET_FILE, "w") as f:
+        json.dump(data, f, indent=4)

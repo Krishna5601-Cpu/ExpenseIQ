@@ -10,6 +10,8 @@ from services import (
     generate_advanced_insights,
     generate_pie_chart,
     generate_line_chart,
+    load_budgets,
+    save_budgets
 )
 from datetime import datetime
 
@@ -72,6 +74,29 @@ def edit_page(expense_id):
 def delete(expense_id):
     delete_expense(expense_id)
     return redirect("/")
+
+
+@app.route("/budget")
+def budget_page():
+    budgets = load_budgets()
+    return render_template("budget.html", budgets=budgets)
+
+
+@app.route("/save-budget", methods=["POST"])
+def save_budget():
+    overall = int(request.form.get("overall", 0))
+
+    categories = {
+        "food": int(request.form.get("food", 0)),
+        "travel": int(request.form.get("travel", 0)),
+        "bills": int(request.form.get("bills", 0)),
+    }
+
+    data = {"overall": overall, "categories": categories}
+
+    save_budgets(data)
+
+    return redirect("/budget")
 
 
 if __name__ == "__main__":
