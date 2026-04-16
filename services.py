@@ -131,6 +131,9 @@ def generate_insights():
         max_cat = max(category_totals, key=category_totals.get)
         insights.append(f"Highest spending category: {max_cat.title()}")
 
+    print("Budgets:", budgets)
+    print("Category totals:", category_totals)
+
     return insights
 
 

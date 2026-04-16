@@ -11,7 +11,7 @@ from services import (
     generate_pie_chart,
     generate_line_chart,
     load_budgets,
-    save_budgets
+    save_budgets,
 )
 from datetime import datetime
 
@@ -24,7 +24,10 @@ app.config.from_object(Config)
 def home():
     expenses = get_all_expenses()
     insights = generate_advanced_insights()
+    budget_insights = generate_insights()
 
+    insights = all_insights
+    all_insights = insights + budget_insights
     generate_pie_chart()
     generate_line_chart()
 
