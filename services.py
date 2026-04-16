@@ -182,3 +182,38 @@ def generate_pie_chart():
 
     plt.savefig("static/pie_chart.png")
     plt.close()
+
+
+def generate_line_chart():
+    expenses = load_expenses()
+
+    if not expenses:
+        return
+
+    daily_totals = defaultdict(int)
+
+    for e in expenses:
+        date = e["date"]
+        amount = int(e["amount"])
+        daily_totals[date] += amount
+
+    # Sort dates
+    sorted_dates = sorted(daily_totals.keys())
+    values = [daily_totals[d] for d in sorted_dates]
+
+    plt.figure()
+    plt.plot(sorted_dates, values, marker="o")
+
+    plt.title("Spending Trend Over Time")
+    plt.xlabel("Date")
+    plt.ylabel("Amount")
+
+    plt.xticks(rotation=45)
+
+    plt.tight_layout()
+
+    import os
+
+    path = os.path.join("static", "line_chart.png")
+    plt.savefig(path)
+    plt.close()

@@ -9,6 +9,7 @@ from services import (
     generate_insights,
     generate_advanced_insights,
     generate_pie_chart,
+    generate_line_chart,
 )
 from datetime import datetime
 
@@ -23,6 +24,7 @@ def home():
     insights = generate_advanced_insights()
 
     generate_pie_chart()
+    generate_line_chart()
 
     return render_template("index.html", expenses=expenses, insights=insights)
 
