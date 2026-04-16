@@ -23,15 +23,16 @@ app.config.from_object(Config)
 @app.route("/")
 def home():
     expenses = get_all_expenses()
+
     insights = generate_advanced_insights()
     budget_insights = generate_insights()
 
-    insights = all_insights
-    all_insights = insights + budget_insights
+    all_insights = insights + budget_insights  # 🔥 combine properly
+
     generate_pie_chart()
     generate_line_chart()
 
-    return render_template("index.html", expenses=expenses, insights=insights)
+    return render_template("index.html", expenses=expenses, insights=all_insights)
 
 
 @app.route("/add-expense", methods=["POST"])
