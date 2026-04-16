@@ -5,6 +5,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
   </head>
   <body class="bg-gray-100 p-10">
+    <a href="/" class="text-blue-500 underline mb-4 block"> ⬅ Back to Home </a>
     <div class="max-w-2xl mx-auto bg-white p-6 rounded-lg shadow">
       <h1 class="text-2xl font-bold mb-4">💰 Set Budgets</h1>
 
@@ -26,7 +27,7 @@
           <input
             type="number"
             name="food"
-            value="{{ budgets.categories.food or 0 }}"
+            value="{{ budgets.categories.get('food', 0) }}"
             class="w-full p-2 border rounded"
           />
         </div>
@@ -36,7 +37,7 @@
           <input
             type="number"
             name="travel"
-            value="{{ budgets.categories.travel or 0 }}"
+            value="{{ budgets.categories.get('travel', 0) }}"
             class="w-full p-2 border rounded"
           />
         </div>
@@ -58,6 +59,17 @@
           Save Budget
         </button>
       </form>
+      <div class="mt-6">
+        <h2 class="text-xl font-semibold mb-2">📊 Current Budgets</h2>
+
+        <p><strong>Overall:</strong> ₹{{ budgets.overall }}</p>
+
+        <ul class="mt-2">
+          {% for cat, amt in budgets.categories.items() %}
+          <li>{{ cat.title() }}: ₹{{ amt }}</li>
+          {% endfor %}
+        </ul>
+      </div>
     </div>
   </body>
 </html>

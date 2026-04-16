@@ -40,5 +40,12 @@
         "category": "food",
         "description": "blah blah",
         "date": "2026-04-14"
+    },
+    {
+        "id": "8809c28e-9b36-48d9-8727-f10d3297ae3d",
+        "amount": 4887,
+        "category": "Food",
+        "description": "ADADad",
+        "date": "2026-04-16"
     }
 ]

@@ -1,0 +1,8 @@
+{
+    "overall": 30000,
+    "categories": {
+        "food": 2000,
+        "travel": 1500,
+        "bills": 500
+    }
+}

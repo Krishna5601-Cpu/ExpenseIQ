@@ -75,57 +75,61 @@ def update_expense(expense_id, data):
     save_expenses(expenses)
 
 
+from collections import defaultdict
+
+
 def generate_insights():
     expenses = load_expenses()
+    budgets = load_budgets()
 
     if not expenses:
         return ["No data available"]
 
     insights = []
 
-    # 🔥 Normalize + Prepare Data
     total = 0
     category_totals = defaultdict(int)
-    daily_totals = defaultdict(int)
 
     for e in expenses:
         amount = int(e["amount"])
-        category = e["category"].strip().lower()  # 🔥 normalize
-        date = e["date"]
+        category = e["category"].strip().lower()
 
         total += amount
         category_totals[category] += amount
-        daily_totals[date] += amount
 
-    # 🔥 Total Spending
-    insights.append(f"Total spending: ₹{total}")
+    # 🔥 Overall Budget Check
+    overall_budget = budgets.get("overall", 0)
 
-    # 🔥 Category Percentage
-    for cat, amt in category_totals.items():
-        percent = (amt / total) * 100
-        insights.append(f"{cat.title()} accounts for {percent:.1f}% of your spending")
+    if overall_budget > 0:
+        percent = (total / overall_budget) * 100
 
-    # 🔥 Highest Spending Category
-    max_cat = max(category_totals, key=category_totals.get)
-    insights.append(f"Your highest spending category is {max_cat.title()}")
-
-    # 🔥 Average Daily Spending
-    avg_daily = total / len(daily_totals)
-    insights.append(f"Your average daily spending is ₹{avg_daily:.0f}")
-
-    # 🔥 Spending Trend (simple)
-    sorted_dates = sorted(daily_totals.keys())
-
-    if len(sorted_dates) >= 2:
-        first = daily_totals[sorted_dates[0]]
-        last = daily_totals[sorted_dates[-1]]
-
-        if last > first:
-            insights.append("Your spending trend is increasing 📈")
-        elif last < first:
-            insights.append("Your spending trend is decreasing 📉")
+        if percent > 100:
+            insights.append(
+                f"🚨 You exceeded your overall budget by {percent - 100:.1f}%"
+            )
         else:
-            insights.append("Your spending trend is stable")
+            insights.append(f"✅ You used {percent:.1f}% of your overall budget")
+
+    # 🔥 Category Budget Check
+    category_budgets = budgets.get("categories", {})
+
+    for cat, amt in category_totals.items():
+        budget = category_budgets.get(cat, 0)
+
+        if budget > 0:
+            percent = (amt / budget) * 100
+
+            if percent > 100:
+                insights.append(
+                    f"🚨 {cat.title()} budget exceeded by {percent - 100:.1f}%"
+                )
+            else:
+                insights.append(f"{cat.title()} usage: {percent:.1f}% of budget")
+
+    # 🔥 Highest category
+    if category_totals:
+        max_cat = max(category_totals, key=category_totals.get)
+        insights.append(f"Highest spending category: {max_cat.title()}")
 
     return insights
 
@@ -226,8 +230,17 @@ def load_budgets():
     if not os.path.exists(BUDGET_FILE):
         return {"overall": 0, "categories": {}}
 
-    with open(BUDGET_FILE, "r") as f:
-        return json.load(f)
+    try:
+        with open(BUDGET_FILE, "r") as f:
+            content = f.read().strip()
+
+            if not content:
+                return {"overall": 0, "categories": {}}
+
+            return json.loads(content)
+
+    except json.JSONDecodeError:
+        return {"overall": 0, "categories": {}}
 
 
 def save_budgets(data):
