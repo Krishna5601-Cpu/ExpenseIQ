@@ -284,3 +284,43 @@ def load_budgets():
 def save_budgets(data):
     with open(BUDGET_FILE, "w") as f:
         json.dump(data, f, indent=4)
+
+
+def generate_description_insights():
+    expenses = load_expenses()
+
+    if not expenses:
+        return []
+
+    insights = []
+
+    food_keywords = ["swiggy", "zomato", "pizza", "burger", "restaurant"]
+    transport_keywords = ["uber", "ola", "metro", "petrol", "diesel"]
+    subscription_keywords = ["netflix", "spotify", "prime", "youtube"]
+
+    food_count = 0
+    transport_count = 0
+    sub_count = 0
+
+    for e in expenses:
+        desc = e["description"].lower()
+
+        if any(word in desc for word in food_keywords):
+            food_count += 1
+
+        if any(word in desc for word in transport_keywords):
+            transport_count += 1
+
+        if any(word in desc for word in subscription_keywords):
+            sub_count += 1
+
+    if food_count >= 2:
+        insights.append("🍔 Frequent food delivery / dining expenses detected")
+
+    if transport_count >= 2:
+        insights.append("🚕 Regular transport or fuel spending detected")
+
+    if sub_count >= 1:
+        insights.append("📺 Subscription expenses found")
+
+    return insights

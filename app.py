@@ -14,6 +14,7 @@ from services import (
     generate_line_chart,
     load_budgets,
     save_budgets,
+    generate_description_insights,
 )
 
 
@@ -27,8 +28,9 @@ def home():
 
     insights = generate_advanced_insights()
     budget_insights = generate_insights()
+    desc_insights = generate_description_insights()
 
-    all_insights = insights + budget_insights
+    all_insights = insights + budget_insights + desc_insights
 
     generate_pie_chart()
     generate_line_chart()
