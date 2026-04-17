@@ -1,5 +1,7 @@
 from flask import Flask, request, jsonify, render_template, redirect
 from config import Config
+from datetime import datetime
+
 from services import (
     add_expense,
     get_all_expenses,
@@ -13,7 +15,6 @@ from services import (
     load_budgets,
     save_budgets,
 )
-from datetime import datetime
 
 
 app = Flask(__name__)
@@ -27,7 +28,7 @@ def home():
     insights = generate_advanced_insights()
     budget_insights = generate_insights()
 
-    all_insights = insights + budget_insights  # 🔥 combine properly
+    all_insights = insights + budget_insights
 
     generate_pie_chart()
     generate_line_chart()
@@ -42,9 +43,14 @@ def create_expense():
     if not date:
         date = datetime.now().strftime("%Y-%m-%d")
 
+    category = request.form.get("category")
+
+    if category == "custom":
+        category = request.form.get("custom_category").strip().lower()
+
     data = {
         "amount": int(request.form.get("amount")),
-        "category": request.form.get("category"),
+        "category": category,
         "description": request.form.get("description"),
         "date": date,
     }

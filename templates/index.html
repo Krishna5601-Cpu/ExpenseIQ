@@ -20,12 +20,29 @@
           required
         />
 
+        <select
+          name="category"
+          id="categorySelect"
+          class="w-full p-2 border rounded"
+          onchange="toggleCustomCategory()"
+          required
+        >
+          <option value="">Select Category</option>
+          <option value="food">Food</option>
+          <option value="travel">Travel</option>
+          <option value="bills">Bills</option>
+          <option value="shopping">Shopping</option>
+          <option value="entertainment">Entertainment</option>
+          <option value="health">Health</option>
+          <option value="custom">Custom Category</option>
+        </select>
+
         <input
           type="text"
-          name="category"
-          placeholder="Category"
-          class="w-full p-2 border rounded"
-          required
+          id="customCategory"
+          name="custom_category"
+          placeholder="Enter custom category"
+          class="w-full p-2 border rounded mt-2 hidden"
         />
 
         <input
@@ -119,5 +136,6 @@
         />
       </div>
     </div>
+    <script src="{{ url_for('static', filename='scripts.js') }}"></script>
   </body>
 </html>

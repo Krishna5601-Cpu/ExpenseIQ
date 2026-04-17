@@ -54,5 +54,19 @@
         "category": "food",
         "description": "heheh",
         "date": "2026-04-15"
+    },
+    {
+        "id": "93816013-bcb7-49fb-917b-35a3f8e0d396",
+        "amount": 4555,
+        "category": "custom",
+        "description": "Ghumna",
+        "date": "2026-04-17"
+    },
+    {
+        "id": "6f5a8b45-0e1e-423b-b5eb-acb25983fb96",
+        "amount": 743,
+        "category": "movie",
+        "description": "hgchvmgh",
+        "date": "2026-04-18"
     }
 ]
