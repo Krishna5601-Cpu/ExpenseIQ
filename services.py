@@ -97,7 +97,7 @@ def generate_insights():
         total += amount
         category_totals[category] += amount
 
-    # 🔥 Overall Budget Check
+    # Overall Budget Check
     overall_budget = budgets.get("overall", 0)
 
     if overall_budget > 0:
@@ -110,7 +110,7 @@ def generate_insights():
         else:
             insights.append(f"✅ You used {percent:.1f}% of your overall budget")
 
-    # 🔥 Category Budget Check
+    # Category Budget Check
     category_budgets = budgets.get("categories", {})
 
     for cat, amt in category_totals.items():
@@ -126,13 +126,48 @@ def generate_insights():
             else:
                 insights.append(f"{cat.title()} usage: {percent:.1f}% of budget")
 
-    # 🔥 Highest category
+    # Highest category
     if category_totals:
         max_cat = max(category_totals, key=category_totals.get)
         insights.append(f"Highest spending category: {max_cat.title()}")
 
     print("Budgets:", budgets)
     print("Category totals:", category_totals)
+
+    from datetime import datetime
+
+    # Weekly + Weekend Analysis
+    weekday_total = 0
+    weekend_total = 0
+
+    for e in expenses:
+        date_obj = datetime.strptime(e["date"], "%Y-%m-%d")
+        amount = int(e["amount"])
+
+        # Monday=0 ... Sunday=6
+        if date_obj.weekday() >= 5:  # Saturday, Sunday
+            weekend_total += amount
+        else:
+            weekday_total += amount
+
+    # Compare
+    if weekend_total > weekday_total:
+        insights.append("📅 You spend more on weekends")
+    elif weekday_total > weekend_total:
+        insights.append("📅 You spend more on weekdays")
+
+    # Highest Spending Day
+    day_totals = defaultdict(int)
+
+    for e in expenses:
+        date_obj = datetime.strptime(e["date"], "%Y-%m-%d")
+        day_name = date_obj.strftime("%A")
+
+        day_totals[day_name] += int(e["amount"])
+
+    if day_totals:
+        max_day = max(day_totals, key=day_totals.get)
+        insights.append(f"📊 Highest spending day: {max_day}")
 
     return insights
 
