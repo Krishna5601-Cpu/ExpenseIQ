@@ -68,5 +68,19 @@
         "category": "movie",
         "description": "hgchvmgh",
         "date": "2026-04-18"
+    },
+    {
+        "id": "f18683f1-bd97-432c-8db4-3e420db8154e",
+        "amount": 5000,
+        "category": "food",
+        "description": "Swiggy",
+        "date": "2026-04-21"
+    },
+    {
+        "id": "2d92a25c-af61-416e-825f-fc5444f801fd",
+        "amount": 200,
+        "category": "travel",
+        "description": "Rapido",
+        "date": "2026-04-21"
     }
 ]

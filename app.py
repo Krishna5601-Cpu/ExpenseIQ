@@ -1,6 +1,9 @@
 from flask import Flask, request, render_template, redirect
 from config import Config
 from datetime import datetime
+import os
+
+from models import db
 
 from services import (
     add_expense,
@@ -15,11 +18,18 @@ from services import (
     load_budgets,
     save_budgets,
     generate_description_insights,
-    validate_expense_data,  # ✅ Added
+    validate_expense_data,
 )
 
 app = Flask(__name__)
+
 app.config.from_object(Config)
+
+
+db.init_app(app)
+
+with app.app_context():
+    db.create_all()
 
 
 @app.route("/")

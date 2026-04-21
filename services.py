@@ -4,6 +4,7 @@ import uuid
 import matplotlib.pyplot as plt
 from collections import defaultdict
 from datetime import datetime
+from models import db, Expense
 
 
 FILE_PATH = "expenses.json"
@@ -23,56 +24,45 @@ def save_expenses(expenses):
 
 
 def add_expense(data):
-    expenses = load_expenses()
+    expense = Expense(
+        amount=data["amount"],
+        category=data["category"],
+        description=data["description"],
+        date=data["date"],
+    )
 
-    expense = {
-        "id": str(uuid.uuid4()),
-        "amount": data.get("amount"),
-        "category": data.get("category"),
-        "description": data.get("description"),
-        "date": data.get("date"),
-    }
-
-    expenses.append(expense)
-    save_expenses(expenses)
+    db.session.add(expense)
+    db.session.commit()
 
     return expense
 
 
 def delete_expense(expense_id):
-    expenses = load_expenses()
+    expense = Expense.query.get(expense_id)
 
-    updated_expenses = [expense for expense in expenses if expense["id"] != expense_id]
-
-    save_expenses(updated_expenses)
+    if expense:
+        db.session.delete(expense)
+        db.session.commit()
 
 
 def get_all_expenses():
-    return load_expenses()
+    return Expense.query.order_by(Expense.id.desc()).all()
 
 
 def get_expense_by_id(expense_id):
-    expenses = load_expenses()
-
-    for expense in expenses:
-        if expense["id"] == expense_id:
-            return expense
-
-    return None
+    return Expense.query.get(expense_id)
 
 
 def update_expense(expense_id, data):
-    expenses = load_expenses()
+    expense = Expense.query.get(expense_id)
 
-    for expense in expenses:
-        if expense["id"] == expense_id:
-            expense["amount"] = data.get("amount")
-            expense["category"] = data.get("category")
-            expense["description"] = data.get("description")
-            expense["date"] = data.get("date")
-            break
+    if expense:
+        expense.amount = data["amount"]
+        expense.category = data["category"]
+        expense.description = data["description"]
+        expense.date = data["date"]
 
-    save_expenses(expenses)
+        db.session.commit()
 
 
 from collections import defaultdict
