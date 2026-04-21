@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, render_template, redirect
+from flask import Flask, request, render_template, redirect
 from config import Config
 from datetime import datetime
 
@@ -15,8 +15,8 @@ from services import (
     load_budgets,
     save_budgets,
     generate_description_insights,
+    validate_expense_data,  # ✅ Added
 )
-
 
 app = Flask(__name__)
 app.config.from_object(Config)
@@ -45,15 +45,26 @@ def create_expense():
     if not date:
         date = datetime.now().strftime("%Y-%m-%d")
 
-    category = request.form.get("category")
+    category = request.form.get("category", "").strip().lower()
 
     if category == "custom":
-        category = request.form.get("custom_category").strip().lower()
+        category = request.form.get("custom_category", "").strip().lower()
+
+    # Safe amount conversion
+    try:
+        amount = int(request.form.get("amount", 0))
+    except ValueError:
+        return "Error: Invalid amount"
+
+    errors = validate_expense_data(amount, category, date)
+
+    if errors:
+        return f"Error: {errors[0]}"
 
     data = {
-        "amount": int(request.form.get("amount")),
+        "amount": amount,
         "category": category,
-        "description": request.form.get("description"),
+        "description": request.form.get("description", "").strip()[:100],
         "date": date,
     }
 
@@ -64,11 +75,25 @@ def create_expense():
 
 @app.route("/update/<expense_id>", methods=["POST"])
 def update(expense_id):
+    category = request.form.get("category", "").strip().lower()
+
+    try:
+        amount = int(request.form.get("amount", 0))
+    except ValueError:
+        return "Error: Invalid amount"
+
+    date = request.form.get("date")
+
+    errors = validate_expense_data(amount, category, date)
+
+    if errors:
+        return f"Error: {errors[0]}"
+
     data = {
-        "amount": int(request.form.get("amount")),
-        "category": request.form.get("category"),
-        "description": request.form.get("description"),
-        "date": request.form.get("date"),
+        "amount": amount,
+        "category": category,
+        "description": request.form.get("description", "").strip()[:100],
+        "date": date,
     }
 
     update_expense(expense_id, data)
@@ -79,6 +104,10 @@ def update(expense_id):
 @app.route("/edit/<expense_id>")
 def edit_page(expense_id):
     expense = get_expense_by_id(expense_id)
+
+    if not expense:
+        return "Expense not found"
+
     return render_template("edit.html", expense=expense)
 
 
@@ -96,12 +125,15 @@ def budget_page():
 
 @app.route("/save-budget", methods=["POST"])
 def save_budget():
-    overall = int(request.form.get("overall", 0))
+    try:
+        overall = int(request.form.get("overall", 0))
+    except ValueError:
+        overall = 0
 
     categories = {
-        "food": int(request.form.get("food", 0)),
-        "travel": int(request.form.get("travel", 0)),
-        "bills": int(request.form.get("bills", 0)),
+        "food": int(request.form.get("food", 0) or 0),
+        "travel": int(request.form.get("travel", 0) or 0),
+        "bills": int(request.form.get("bills", 0) or 0),
     }
 
     data = {"overall": overall, "categories": categories}

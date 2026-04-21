@@ -324,3 +324,32 @@ def generate_description_insights():
         insights.append("📺 Subscription expenses found")
 
     return insights
+
+
+from datetime import datetime
+
+
+def validate_expense_data(amount, category, date):
+    errors = []
+
+    # Amount
+    if amount <= 0:
+        errors.append("Amount must be greater than 0")
+
+    if amount > 1000000:
+        errors.append("Amount too large")
+
+    # Category
+    if not category.strip():
+        errors.append("Category is required")
+
+    if len(category) > 30:
+        errors.append("Category too long")
+
+    # Date
+    try:
+        datetime.strptime(date, "%Y-%m-%d")
+    except ValueError:
+        errors.append("Invalid date format")
+
+    return errors
