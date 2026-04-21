@@ -1,7 +1,6 @@
 from flask import Flask, request, render_template, redirect
 from config import Config
 from datetime import datetime
-import os
 
 from models import db
 
@@ -22,9 +21,7 @@ from services import (
 )
 
 app = Flask(__name__)
-
 app.config.from_object(Config)
-
 
 db.init_app(app)
 
@@ -60,7 +57,6 @@ def create_expense():
     if category == "custom":
         category = request.form.get("custom_category", "").strip().lower()
 
-    # Safe amount conversion
     try:
         amount = int(request.form.get("amount", 0))
     except ValueError:
@@ -83,16 +79,15 @@ def create_expense():
     return redirect("/")
 
 
-@app.route("/update/<expense_id>", methods=["POST"])
+@app.route("/update/<int:expense_id>", methods=["POST"])
 def update(expense_id):
     category = request.form.get("category", "").strip().lower()
+    date = request.form.get("date")
 
     try:
         amount = int(request.form.get("amount", 0))
     except ValueError:
         return "Error: Invalid amount"
-
-    date = request.form.get("date")
 
     errors = validate_expense_data(amount, category, date)
 
@@ -111,7 +106,7 @@ def update(expense_id):
     return redirect("/")
 
 
-@app.route("/edit/<expense_id>")
+@app.route("/edit/<int:expense_id>")
 def edit_page(expense_id):
     expense = get_expense_by_id(expense_id)
 
@@ -121,7 +116,7 @@ def edit_page(expense_id):
     return render_template("edit.html", expense=expense)
 
 
-@app.route("/delete/<expense_id>")
+@app.route("/delete/<int:expense_id>")
 def delete(expense_id):
     delete_expense(expense_id)
     return redirect("/")

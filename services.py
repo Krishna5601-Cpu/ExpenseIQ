@@ -1,26 +1,15 @@
 import json
 import os
-import uuid
+import matplotlib
+
+matplotlib.use("Agg")
+
 import matplotlib.pyplot as plt
 from collections import defaultdict
 from datetime import datetime
 from models import db, Expense
 
-
-FILE_PATH = "expenses.json"
-
-
-def load_expenses():
-    if not os.path.exists(FILE_PATH):
-        return []
-
-    with open(FILE_PATH, "r") as f:
-        return json.load(f)
-
-
-def save_expenses(expenses):
-    with open(FILE_PATH, "w") as f:
-        json.dump(expenses, f, indent=4)
+BUDGET_FILE = "budgets.json"
 
 
 def add_expense(data):
@@ -30,19 +19,9 @@ def add_expense(data):
         description=data["description"],
         date=data["date"],
     )
-
     db.session.add(expense)
     db.session.commit()
-
     return expense
-
-
-def delete_expense(expense_id):
-    expense = Expense.query.get(expense_id)
-
-    if expense:
-        db.session.delete(expense)
-        db.session.commit()
 
 
 def get_all_expenses():
@@ -61,33 +40,35 @@ def update_expense(expense_id, data):
         expense.category = data["category"]
         expense.description = data["description"]
         expense.date = data["date"]
-
         db.session.commit()
 
 
-from collections import defaultdict
+def delete_expense(expense_id):
+    expense = Expense.query.get(expense_id)
+
+    if expense:
+        db.session.delete(expense)
+        db.session.commit()
 
 
 def generate_insights():
-    expenses = load_expenses()
+    expenses = get_all_expenses()
     budgets = load_budgets()
 
     if not expenses:
         return ["No data available"]
 
     insights = []
-
     total = 0
     category_totals = defaultdict(int)
 
     for e in expenses:
-        amount = int(e["amount"])
-        category = e["category"].strip().lower()
+        amount = e.amount
+        category = e.category.strip().lower()
 
         total += amount
         category_totals[category] += amount
 
-    # Overall Budget Check
     overall_budget = budgets.get("overall", 0)
 
     if overall_budget > 0:
@@ -100,7 +81,6 @@ def generate_insights():
         else:
             insights.append(f"✅ You used {percent:.1f}% of your overall budget")
 
-    # Category Budget Check
     category_budgets = budgets.get("categories", {})
 
     for cat, amt in category_totals.items():
@@ -116,44 +96,32 @@ def generate_insights():
             else:
                 insights.append(f"{cat.title()} usage: {percent:.1f}% of budget")
 
-    # Highest category
     if category_totals:
         max_cat = max(category_totals, key=category_totals.get)
         insights.append(f"Highest spending category: {max_cat.title()}")
 
-    print("Budgets:", budgets)
-    print("Category totals:", category_totals)
-
-    from datetime import datetime
-
-    # Weekly + Weekend Analysis
     weekday_total = 0
     weekend_total = 0
 
     for e in expenses:
-        date_obj = datetime.strptime(e["date"], "%Y-%m-%d")
-        amount = int(e["amount"])
+        date_obj = datetime.strptime(e.date, "%Y-%m-%d")
 
-        # Monday=0 ... Sunday=6
-        if date_obj.weekday() >= 5:  # Saturday, Sunday
-            weekend_total += amount
+        if date_obj.weekday() >= 5:
+            weekend_total += e.amount
         else:
-            weekday_total += amount
+            weekday_total += e.amount
 
-    # Compare
     if weekend_total > weekday_total:
         insights.append("📅 You spend more on weekends")
     elif weekday_total > weekend_total:
         insights.append("📅 You spend more on weekdays")
 
-    # Highest Spending Day
     day_totals = defaultdict(int)
 
     for e in expenses:
-        date_obj = datetime.strptime(e["date"], "%Y-%m-%d")
+        date_obj = datetime.strptime(e.date, "%Y-%m-%d")
         day_name = date_obj.strftime("%A")
-
-        day_totals[day_name] += int(e["amount"])
+        day_totals[day_name] += e.amount
 
     if day_totals:
         max_day = max(day_totals, key=day_totals.get)
@@ -163,29 +131,23 @@ def generate_insights():
 
 
 def generate_advanced_insights():
-    expenses = load_expenses()
+    expenses = get_all_expenses()
 
     if not expenses:
         return ["No data available"]
 
-    total = sum(e["amount"] for e in expenses)
-
+    total = sum(e.amount for e in expenses)
     category_totals = defaultdict(int)
 
     for e in expenses:
-        category_totals[e["category"]] += e["amount"]
+        category_totals[e.category] += e.amount
 
-    insights = []
+    insights = [f"Total spending: ₹{total}"]
 
-    # Total
-    insights.append(f"Total spending: ₹{total}")
-
-    # Category %
     for cat, amt in category_totals.items():
         percent = (amt / total) * 100
         insights.append(f"{cat} accounts for {percent:.1f}%")
 
-    # Highest category
     max_cat = max(category_totals, key=category_totals.get)
     insights.append(f"Highest spending: {max_cat}")
 
@@ -193,31 +155,28 @@ def generate_advanced_insights():
 
 
 def generate_pie_chart():
-    expenses = load_expenses()
+    expenses = get_all_expenses()
 
     if not expenses:
         return
 
-    category_totals = {}
+    category_totals = defaultdict(int)
 
     for e in expenses:
-        cat = e["category"]
-        category_totals[cat] = category_totals.get(cat, 0) + e["amount"]
+        category_totals[e.category] += e.amount
 
     labels = list(category_totals.keys())
     values = list(category_totals.values())
 
     plt.figure()
     plt.pie(values, labels=labels, autopct="%1.1f%%")
-
     plt.title("Expense Distribution")
-
     plt.savefig("static/pie_chart.png")
     plt.close()
 
 
 def generate_line_chart():
-    expenses = load_expenses()
+    expenses = get_all_expenses()
 
     if not expenses:
         return
@@ -225,33 +184,22 @@ def generate_line_chart():
     daily_totals = defaultdict(int)
 
     for e in expenses:
-        date = e["date"]
-        amount = int(e["amount"])
-        daily_totals[date] += amount
+        daily_totals[e.date] += e.amount
 
-    # Sort dates
     sorted_dates = sorted(daily_totals.keys())
     values = [daily_totals[d] for d in sorted_dates]
 
     plt.figure()
     plt.plot(sorted_dates, values, marker="o")
-
     plt.title("Spending Trend Over Time")
     plt.xlabel("Date")
     plt.ylabel("Amount")
-
     plt.xticks(rotation=45)
-
     plt.tight_layout()
-
-    import os
 
     path = os.path.join("static", "line_chart.png")
     plt.savefig(path)
     plt.close()
-
-
-BUDGET_FILE = "budgets.json"
 
 
 def load_budgets():
@@ -277,7 +225,7 @@ def save_budgets(data):
 
 
 def generate_description_insights():
-    expenses = load_expenses()
+    expenses = get_all_expenses()
 
     if not expenses:
         return []
@@ -293,7 +241,7 @@ def generate_description_insights():
     sub_count = 0
 
     for e in expenses:
-        desc = e["description"].lower()
+        desc = (e.description or "").lower()
 
         if any(word in desc for word in food_keywords):
             food_count += 1
@@ -316,27 +264,21 @@ def generate_description_insights():
     return insights
 
 
-from datetime import datetime
-
-
 def validate_expense_data(amount, category, date):
     errors = []
 
-    # Amount
     if amount <= 0:
         errors.append("Amount must be greater than 0")
 
     if amount > 1000000:
         errors.append("Amount too large")
 
-    # Category
     if not category.strip():
         errors.append("Category is required")
 
     if len(category) > 30:
         errors.append("Category too long")
 
-    # Date
     try:
         datetime.strptime(date, "%Y-%m-%d")
     except ValueError:
