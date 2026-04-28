@@ -4,6 +4,13 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>ExpenseIQ Dashboard</title>
+
+    <link
+      rel="icon"
+      type="image/png"
+      href="{{ url_for('static', filename='favicon.png') }}"
+    />
+
     <script src="https://cdn.tailwindcss.com"></script>
   </head>
 
@@ -15,11 +22,10 @@
         class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between"
       >
         <div class="flex items-center gap-3">
-          <div
-            class="w-10 h-10 rounded-xl bg-indigo-600 text-white flex items-center justify-center font-bold"
-          >
-            ₹
-          </div>
+          <img
+            src="{{ url_for('static', filename='logo.png') }}"
+            class="h-10 w-auto"
+          />
           <div>
             <h1 class="text-xl font-bold">ExpenseIQ</h1>
             <p class="text-xs text-slate-500">Smart Expense Dashboard</p>
