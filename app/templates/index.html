@@ -11,41 +11,117 @@
       href="{{ url_for('static', filename='favicon.png') }}"
     />
 
+    <script>
+      tailwind.config = {
+        darkMode: "class",
+      };
+    </script>
+
     <script src="https://cdn.tailwindcss.com"></script>
   </head>
 
-  <body class="bg-slate-100 text-slate-800 min-h-screen">
+  <body
+    class="bg-slate-100 text-slate-800 min-h-screen dark:bg-slate-950 dark:text-slate-100 transition-colors duration-300"
+  >
     <nav
-      class="sticky top-0 z-50 border-b border-slate-200 bg-white/90 backdrop-blur"
+      class="sticky top-0 z-50 border-b border-slate-200/70 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl shadow-sm"
     >
       <div
-        class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between"
+        class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between"
       >
         <div class="flex items-center gap-3">
-          <img
-            src="{{ url_for('static', filename='logo.png') }}"
-            class="h-10 w-auto"
-          />
-          <div>
-            <h1 class="text-xl font-bold">ExpenseIQ</h1>
-            <p class="text-xs text-slate-500">Smart Expense Dashboard</p>
-          </div>
+          <a href="/" class="flex items-center gap-3 group">
+            <img
+              src="{{ url_for('static', filename='logo.png') }}"
+              alt="ExpenseIQ Logo"
+              class="h-11 w-auto transition duration-300 group-hover:scale-105"
+            />
+
+            <div class="hidden sm:block">
+              <h1
+                class="text-xl font-bold bg-gradient-to-r from-indigo-600 to-emerald-500 bg-clip-text text-transparent"
+              >
+                ExpenseIQ
+              </h1>
+
+              <p class="text-xs text-slate-500 dark:text-slate-400">
+                Smart Expense Dashboard
+              </p>
+            </div>
+          </a>
         </div>
 
-        <div class="flex items-center gap-3">
+        <div class="hidden md:flex items-center gap-2">
+          <a
+            href="/"
+            class="px-4 py-2 rounded-xl text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition font-medium"
+          >
+            Dashboard
+          </a>
+
           <a
             href="/budget"
-            class="px-4 py-2 rounded-xl bg-slate-900 text-white hover:bg-slate-700 transition"
+            class="px-4 py-2 rounded-xl bg-slate-900 dark:bg-indigo-600 text-white hover:bg-slate-700 transition font-medium"
           >
             Budget
           </a>
+
+          <button
+            id="darkModeBtn"
+            class="px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+          >
+            🌙
+          </button>
+
+          <div
+            class="w-10 h-10 rounded-full bg-gradient-to-r from-indigo-600 to-emerald-500 text-white flex items-center justify-center font-bold shadow"
+          >
+            K
+          </div>
+        </div>
+
+        <button
+          id="menuBtn"
+          class="md:hidden p-2 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+        >
+          ☰
+        </button>
+      </div>
+
+      <div
+        id="mobileMenu"
+        class="hidden md:hidden border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-4 pb-4"
+      >
+        <div class="flex flex-col gap-2 pt-3">
+          <a
+            href="/"
+            class="px-4 py-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+          >
+            Dashboard
+          </a>
+
+          <a
+            href="/budget"
+            class="px-4 py-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+          >
+            Budget
+          </a>
+
+          <button
+            id="darkModeBtnMobile"
+            class="text-left px-4 py-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+          >
+            🌙 Dark Mode
+          </button>
         </div>
       </div>
     </nav>
 
-    <main class="max-w-7xl mx-auto px-6 py-8 space-y-8">
+    <main
+      class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-6 sm:space-y-8"
+    >
       <section
-        class="bg-gradient-to-r from-indigo-600 to-blue-600 text-white rounded-3xl p-8 shadow-lg"
+        class="bg-gradient-to-r from-indigo-600 to-blue-600 text-white rounded-3xl p-5 sm:p-8 shadow-lg"
       >
         <div
           class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6"
@@ -54,9 +130,11 @@
             <p class="text-sm uppercase tracking-wider opacity-80">
               Financial Control
             </p>
+
             <h2 class="text-3xl md:text-4xl font-bold mt-2">
               Manage Expenses Smarter
             </h2>
+
             <p class="mt-3 text-white/80 max-w-xl">
               Track spending, monitor trends, and unlock insights that help you
               make better money decisions.
@@ -66,40 +144,61 @@
           <div class="grid grid-cols-2 gap-4 min-w-[280px]">
             <div class="bg-white/10 rounded-2xl p-4">
               <p class="text-sm text-white/70">Transactions</p>
-              <p class="text-2xl font-bold">{{ expenses|length }}</p>
+              <p class="text-2xl sm:text-3xl font-bold">
+                {{ expenses|length }}
+              </p>
             </div>
 
             <div class="bg-white/10 rounded-2xl p-4">
               <p class="text-sm text-white/70">Insights</p>
-              <p class="text-2xl font-bold">{{ insights|length }}</p>
+              <p class="text-2xl sm:text-3xl font-bold">
+                {{ insights|length }}
+              </p>
             </div>
           </div>
         </div>
       </section>
 
       <section class="grid lg:grid-cols-3 gap-6">
-        <div class="bg-white rounded-3xl shadow p-6">
-          <p class="text-sm text-slate-500">Total Transactions</p>
-          <h3 class="text-3xl font-bold mt-2">{{ expenses|length }}</h3>
+        <div
+          class="bg-white dark:bg-slate-900 rounded-3xl shadow p-6 hover:-translate-y-1 hover:shadow-xl transition duration-300"
+        >
+          <p class="text-sm text-slate-500 dark:text-slate-400">
+            Total Transactions
+          </p>
+          <h3 class="text-2xl sm:text-3xl font-bold mt-2">
+            {{ expenses|length }}
+          </h3>
         </div>
 
-        <div class="bg-white rounded-3xl shadow p-6">
-          <p class="text-sm text-slate-500">Categories Used</p>
-          <h3 class="text-3xl font-bold mt-2">
+        <div
+          class="bg-white dark:bg-slate-900 rounded-3xl shadow p-6 hover:-translate-y-1 hover:shadow-xl transition duration-300"
+        >
+          <p class="text-sm text-slate-500 dark:text-slate-400">
+            Categories Used
+          </p>
+          <h3 class="text-2xl sm:text-3xl font-bold mt-2">
             {{ expenses|map(attribute='category')|list|length }}
           </h3>
         </div>
 
-        <div class="bg-white rounded-3xl shadow p-6">
-          <p class="text-sm text-slate-500">Status</p>
-          <h3 class="text-3xl font-bold mt-2 text-emerald-600">Active</h3>
+        <div
+          class="bg-white dark:bg-slate-900 rounded-3xl shadow p-6 hover:-translate-y-1 hover:shadow-xl transition duration-300"
+        >
+          <p class="text-sm text-slate-500 dark:text-slate-400">Status</p>
+          <h3 class="text-2xl sm:text-3xl font-bold mt-2 text-emerald-600">
+            Active
+          </h3>
         </div>
       </section>
 
       <section class="grid lg:grid-cols-3 gap-8">
-        <div class="lg:col-span-1 bg-white rounded-3xl shadow p-6 h-fit">
+        <div
+          class="lg:col-span-1 bg-white dark:bg-slate-900 rounded-3xl shadow p-5 sm:p-6 h-fit lg:sticky lg:top-24"
+        >
           <div class="flex items-center justify-between mb-6">
             <h2 class="text-xl font-bold">Add Expense</h2>
+
             <span
               class="text-xs px-3 py-1 rounded-full bg-indigo-100 text-indigo-700"
             >
@@ -112,7 +211,7 @@
               type="number"
               name="amount"
               placeholder="Amount"
-              class="w-full px-4 py-3 border border-slate-200 rounded-2xl outline-none focus:ring-2 focus:ring-indigo-500"
+              class="w-full px-4 py-3 border border-slate-200 dark:border-slate-700 dark:bg-slate-800 rounded-2xl outline-none focus:ring-2 focus:ring-indigo-500"
               required
             />
 
@@ -120,7 +219,7 @@
               name="category"
               id="categorySelect"
               onchange="toggleCustomCategory()"
-              class="w-full px-4 py-3 border border-slate-200 rounded-2xl outline-none focus:ring-2 focus:ring-indigo-500"
+              class="w-full px-4 py-3 border border-slate-200 dark:border-slate-700 dark:bg-slate-800 rounded-2xl outline-none focus:ring-2 focus:ring-indigo-500"
               required
             >
               <option value="">Select Category</option>
@@ -138,20 +237,20 @@
               id="customCategory"
               name="custom_category"
               placeholder="Custom Category"
-              class="hidden w-full px-4 py-3 border border-slate-200 rounded-2xl outline-none focus:ring-2 focus:ring-indigo-500"
+              class="hidden w-full px-4 py-3 border border-slate-200 dark:border-slate-700 dark:bg-slate-800 rounded-2xl outline-none focus:ring-2 focus:ring-indigo-500"
             />
 
             <input
               type="text"
               name="description"
               placeholder="Description"
-              class="w-full px-4 py-3 border border-slate-200 rounded-2xl outline-none focus:ring-2 focus:ring-indigo-500"
+              class="w-full px-4 py-3 border border-slate-200 dark:border-slate-700 dark:bg-slate-800 rounded-2xl outline-none focus:ring-2 focus:ring-indigo-500"
             />
 
             <input
               type="date"
               name="date"
-              class="w-full px-4 py-3 border border-slate-200 rounded-2xl outline-none focus:ring-2 focus:ring-indigo-500"
+              class="w-full px-4 py-3 border border-slate-200 dark:border-slate-700 dark:bg-slate-800 rounded-2xl outline-none focus:ring-2 focus:ring-indigo-500"
             />
 
             <button
@@ -165,7 +264,9 @@
 
         <div class="lg:col-span-2 space-y-8">
           <div class="grid md:grid-cols-2 gap-6">
-            <div class="bg-white rounded-3xl shadow p-6">
+            <div
+              class="bg-white dark:bg-slate-900 rounded-3xl shadow p-6 hover:-translate-y-1 hover:shadow-xl transition duration-300"
+            >
               <h2 class="text-xl font-bold mb-4">Expense Distribution</h2>
 
               <img
@@ -174,7 +275,9 @@
               />
             </div>
 
-            <div class="bg-white rounded-3xl shadow p-6">
+            <div
+              class="bg-white dark:bg-slate-900 rounded-3xl shadow p-6 hover:-translate-y-1 hover:shadow-xl transition duration-300"
+            >
               <h2 class="text-xl font-bold mb-4">Spending Trend</h2>
 
               <img
@@ -184,7 +287,9 @@
             </div>
           </div>
 
-          <div class="bg-white rounded-3xl shadow p-6">
+          <div
+            class="bg-white dark:bg-slate-900 rounded-3xl shadow p-6 hover:-translate-y-1 hover:shadow-xl transition duration-300"
+          >
             <div class="flex items-center justify-between mb-5">
               <h2 class="text-xl font-bold">AI Insights</h2>
 
@@ -198,7 +303,7 @@
             <div class="grid gap-3">
               {% for insight in insights %}
               <div
-                class="p-4 rounded-2xl bg-slate-50 border border-slate-100 hover:bg-slate-100 transition"
+                class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700 transition"
               >
                 {{ insight }}
               </div>
@@ -208,22 +313,24 @@
         </div>
       </section>
 
-      <section class="bg-white rounded-3xl shadow p-6">
+      <section class="bg-white dark:bg-slate-900 rounded-3xl shadow p-6">
         <div
           class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6"
         >
           <h2 class="text-xl font-bold">Recent Expenses</h2>
 
-          <span class="text-sm text-slate-500">
+          <span class="text-sm text-slate-500 dark:text-slate-400">
             {{ expenses|length }} records
           </span>
         </div>
 
         {% if expenses %}
-        <div class="overflow-x-auto">
+        <div class="overflow-x-auto rounded-2xl">
           <table class="w-full min-w-[700px]">
             <thead>
-              <tr class="text-left border-b border-slate-200">
+              <tr
+                class="text-left border-b border-slate-200 dark:border-slate-800"
+              >
                 <th class="py-3 pr-4">Amount</th>
                 <th class="py-3 pr-4">Category</th>
                 <th class="py-3 pr-4">Description</th>
@@ -234,10 +341,12 @@
 
             <tbody>
               {% for expense in expenses %}
-              <tr class="border-b border-slate-100 hover:bg-slate-50">
+              <tr
+                class="border-b border-slate-100 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800"
+              >
                 <td class="py-4 pr-4 font-semibold">₹{{ expense.amount }}</td>
                 <td class="py-4 pr-4 capitalize">{{ expense.category }}</td>
-                <td class="py-4 pr-4 text-slate-500">
+                <td class="py-4 pr-4 text-slate-500 dark:text-slate-400">
                   {{ expense.description }}
                 </td>
                 <td class="py-4 pr-4">{{ expense.date }}</td>
@@ -264,9 +373,10 @@
             </tbody>
           </table>
         </div>
+
         {% else %}
         <div
-          class="text-center py-10 rounded-2xl bg-slate-50 text-slate-500 border border-dashed"
+          class="text-center py-10 rounded-2xl bg-slate-50 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border border-dashed border-slate-200 dark:border-slate-700"
         >
           No expenses yet. Add your first transaction.
         </div>
