@@ -92,3 +92,46 @@ document.addEventListener("DOMContentLoaded", () => {
     }, index * 80);
   });
 });
+
+const aiBtn = document.getElementById("generateAiBtn");
+const aiBox = document.getElementById("aiInsightsBox");
+
+if (aiBtn && aiBox) {
+  aiBtn.addEventListener("click", async () => {
+    aiBtn.disabled = true;
+    aiBtn.innerText = "Generating...";
+
+    aiBox.innerHTML = `
+      <div class="space-y-3">
+        <div class="h-12 rounded-2xl bg-slate-200 dark:bg-slate-700 animate-pulse"></div>
+        <div class="h-12 rounded-2xl bg-slate-200 dark:bg-slate-700 animate-pulse"></div>
+        <div class="h-12 rounded-2xl bg-slate-200 dark:bg-slate-700 animate-pulse"></div>
+        <div class="h-12 rounded-2xl bg-slate-200 dark:bg-slate-700 animate-pulse"></div>
+      </div>
+    `;
+
+    try {
+      const res = await fetch("/ai-insights");
+      const data = await res.json();
+
+      aiBox.innerHTML = "";
+
+      data.insights.forEach((item) => {
+        aiBox.innerHTML += `
+          <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700">
+            ${item}
+          </div>
+        `;
+      });
+    } catch (error) {
+      aiBox.innerHTML = `
+        <div class="p-4 rounded-2xl bg-rose-100 text-rose-700">
+          Failed to load AI insights.
+        </div>
+      `;
+    }
+
+    aiBtn.disabled = false;
+    aiBtn.innerText = "Generate";
+  });
+}

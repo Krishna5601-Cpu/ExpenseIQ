@@ -5,12 +5,17 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
+api_key = os.getenv("GEMINI_API_KEY")
+
+client = genai.Client(api_key=api_key) if api_key else None
 
 
 def generate_ai_insights(expenses):
     if not expenses:
         return ["No expenses available yet."]
+
+    if not client:
+        return ["AI insights unavailable. Missing API key."]
 
     expense_data = []
 
@@ -34,9 +39,10 @@ Your job:
 - Be concise
 - Be accurate
 - Be motivating
-- Return 4 bullet insights only
+- Return exactly 4 short bullet insights
 - Mention currency as ₹
-- No markdown
+- No markdown headings
+- Keep output beginner-friendly
 """
 
     user_prompt = f"""
@@ -44,23 +50,34 @@ Analyze this expense data:
 
 {json.dumps(expense_data, indent=2)}
 
-Give:
-1. Top spending trend
-2. Wasteful pattern if any
-3. Saving suggestion
-4. Budget advice
+Return:
+1. Spending trend
+2. Risk or wasteful habit
+3. Savings suggestion
+4. Budget recommendation
 """
 
-    response = client.models.generate_content(
-        model="gemini-2.5-flash",
-        contents=user_prompt,
-        config={
-            "system_instruction": system_prompt,
-            "temperature": 0.4,
-            "max_output_tokens": 250,
-        },
-    )
+    try:
+        response = client.models.generate_content(
+            model="gemini-2.5-flash",
+            contents=user_prompt,
+            config={
+                "system_instruction": system_prompt,
+                "temperature": 0.4,
+                "max_output_tokens": 250,
+            },
+        )
 
-    text = response.text.strip()
+        text = response.text.strip()
 
-    return text.split("\n")
+        insights = [
+            line.strip("-• ").strip() for line in text.split("\n") if line.strip()
+        ]
+
+        return insights[:4]
+
+    except Exception:
+        return [
+            "AI insights temporarily unavailable.",
+            "Please check API key or internet connection.",
+        ]
