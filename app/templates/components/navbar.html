@@ -1,0 +1,99 @@
+<nav
+  class="sticky top-0 z-50 border-b border-slate-200/70 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl shadow-sm"
+>
+  <div
+    class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between"
+  >
+    <!-- Logo -->
+
+    <a href="{{ url_for('main.home') }}" class="flex items-center gap-3 group">
+      <img
+        src="{{ url_for('static', filename='images/logo.png') }}"
+        alt="ExpenseIQ Logo"
+        class="h-11 w-auto transition duration-300 group-hover:scale-105"
+      />
+
+      <div class="hidden sm:block">
+        <h1
+          class="text-xl font-bold bg-gradient-to-r from-indigo-600 to-emerald-500 bg-clip-text text-transparent"
+        >
+          ExpenseIQ
+        </h1>
+
+        <p class="text-xs text-slate-500 dark:text-slate-400">
+          Smart Expense Tracker
+        </p>
+      </div>
+    </a>
+
+    <!-- Desktop Menu -->
+
+    <div class="hidden md:flex items-center gap-2">
+      <a
+        href="{{ url_for('main.home') }}"
+        class="px-4 py-2 rounded-xl transition font-medium {% if request.endpoint == 'main.home' %} bg-indigo-600 text-white {% else %} text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 {% endif %}"
+      >
+        Dashboard
+      </a>
+
+      <a
+        href="{{ url_for('budget.budget_page') }}"
+        class="px-4 py-2 rounded-xl transition font-medium {% if request.endpoint == 'budget.budget_page' %} bg-indigo-600 text-white {% else %} text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 {% endif %}"
+      >
+        Budget
+      </a>
+
+      <button
+        id="darkModeBtn"
+        class="px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+      >
+        🌙
+      </button>
+
+      <div
+        class="w-10 h-10 rounded-full bg-gradient-to-r from-indigo-600 to-emerald-500 text-white flex items-center justify-center font-bold shadow"
+      >
+        E
+      </div>
+    </div>
+
+    <!-- Mobile Menu Button -->
+
+    <button
+      id="menuBtn"
+      class="md:hidden p-2 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+    >
+      ☰
+    </button>
+  </div>
+
+  <!-- Mobile Menu -->
+
+  <div
+    id="mobileMenu"
+    class="hidden md:hidden border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-4 pb-4"
+  >
+    <div class="flex flex-col gap-2 pt-3">
+      <a
+        href="{{ url_for('main.home') }}"
+        class="px-4 py-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+      >
+        Dashboard
+      </a>
+
+      <a
+        href="{{ url_for('budget.budget_page') }}"
+        class="px-4 py-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+      >
+        Budget
+      </a>
+
+      <button
+        id="darkModeBtnMobile"
+        class="text-left px-4 py-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+      >
+        🌙 Dark Mode
+      </button>
+    </div>
+  </div>
+</nav>

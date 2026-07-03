@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en" class="h-full">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>{% block title %}ExpenseIQ{% endblock %}</title>
+
+    <link
+      rel="icon"
+      type="image/png"
+      href="{{ url_for('static', filename='images/favicon.png') }}"
+    />
+
+    <script>
+      tailwind.config = {
+        darkMode: "class",
+      };
+    </script>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    {% block head %}{% endblock %}
+  </head>
+
+  <body
+    class="min-h-screen bg-slate-100 text-slate-800 dark:bg-slate-950 dark:text-slate-100 transition-colors duration-300"
+  >
+    <!-- NAVBAR -->
+
+    {% include "components/navbar.html" %}
+
+    <!-- ================= CONTENT ================= -->
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+      {% block content %}{% endblock %}
+    </main>
+
+    <!-- FOOTER -->
+
+    <footer class="border-t border-slate-200 dark:border-slate-800 py-6 mt-10">
+      <div
+        class="max-w-7xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-3"
+      >
+        <div>
+          <h3 class="font-semibold">ExpenseIQ</h3>
+
+          <p class="text-sm text-slate-500 dark:text-slate-400">
+            Track smarter. Spend wiser.
+          </p>
+        </div>
+
+        <div class="text-sm text-slate-500 dark:text-slate-400">
+          © {{ current_year | default(2026) }} ExpenseIQ
+        </div>
+      </div>
+    </footer>
+
+    <!-- SCRIPTS -->
+
+    <script
+      src="{{ url_for('static', filename='js/scripts.js') }}"
+      defer
+    ></script>
+
+    {% block scripts %}{% endblock %}
+  </body>
+</html>
