@@ -17,7 +17,7 @@ from dotenv import load_dotenv
 
 BASE_DIR = Path(__file__).resolve().parent
 
-load_dotenv(BASE_DIR.parent / ".env")
+load_dotenv(BASE_DIR / ".env")
 
 
 class Config:
@@ -30,14 +30,19 @@ class Config:
         "change-this-secret-key",
     )
 
+    # -------------------------------------------------
     # Database
+    # -------------------------------------------------
 
-    SQLALCHEMY_DATABASE_URI: str = os.getenv(
+    INSTANCE_DIR = BASE_DIR / "instance"
+    INSTANCE_DIR.mkdir(exist_ok=True)
+
+    SQLALCHEMY_DATABASE_URI = os.getenv(
         "DATABASE_URL",
-        f"sqlite:///{BASE_DIR / 'instance' / 'expenseiq.db'}",
+        f"sqlite:///{INSTANCE_DIR / 'expenseiq.db'}",
     )
 
-    SQLALCHEMY_TRACK_MODIFICATIONS: bool = False
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
 
     # Gemini AI
 
@@ -50,7 +55,7 @@ class Config:
 
     # Budget Storage
 
-    BUDGET_FILE: Path = BASE_DIR.parent / "budgets.json"
+    BUDGET_FILE = BASE_DIR / "budgets.json"
 
     # Chart Output
 
