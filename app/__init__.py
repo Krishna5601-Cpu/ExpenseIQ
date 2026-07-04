@@ -6,6 +6,7 @@ initializes extensions, and registers blueprints.
 """
 
 from __future__ import annotations
+from app.utils.logger import configure_logger
 
 from flask import Flask
 
@@ -20,6 +21,8 @@ def create_app() -> Flask:
     Returns:
         Flask: Configured Flask application instance.
     """
+
+    configure_logger()
 
     app = Flask(__name__)
 
@@ -40,6 +43,10 @@ def create_app() -> Flask:
     app.register_blueprint(main_bp)
     app.register_blueprint(expense_bp)
     app.register_blueprint(budget_bp)
+
+    from app.errors import register_error_handlers
+
+    register_error_handlers(app)
 
     # Create Database
 

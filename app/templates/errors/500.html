@@ -1,0 +1,21 @@
+{% extends "base.html" %} {% block title %}500 - Server Error{% endblock %} {%
+block content %}
+
+<section class="flex flex-col items-center justify-center py-24 text-center">
+  <h1 class="text-7xl font-bold text-red-600">500</h1>
+
+  <h2 class="mt-6 text-3xl font-bold">Something Went Wrong</h2>
+
+  <p class="mt-3 text-slate-500 dark:text-slate-400">
+    An unexpected error occurred. Please try again later.
+  </p>
+
+  <a
+    href="{{ url_for('main.home') }}"
+    class="mt-8 rounded-xl bg-indigo-600 px-6 py-3 text-white hover:bg-indigo-700 transition"
+  >
+    Back to Dashboard
+  </a>
+</section>
+
+{% endblock %}
