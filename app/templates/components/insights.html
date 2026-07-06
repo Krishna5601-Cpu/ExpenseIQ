@@ -1,17 +1,19 @@
-<section class="bg-white dark:bg-slate-900 rounded-3xl shadow p-6 animate-card">
-  <div class="flex items-center justify-between mb-5">
+<!-- ================= SMART INSIGHTS ================= -->
+
+<section class="bg-white rounded-3xl shadow p-6">
+  <div class="flex items-center justify-between mb-6">
     <div>
-      <h2 class="text-xl font-bold flex items-center gap-2">
+      <h2 class="text-2xl font-bold flex items-center gap-2">
         🧠 Smart Insights
       </h2>
 
-      <p class="text-sm text-slate-500 dark:text-slate-400">
-        Automatically generated from your spending habits.
+      <p class="text-gray-500 text-sm mt-1">
+        Quick analysis of your spending habits.
       </p>
     </div>
 
     <span
-      class="rounded-full bg-emerald-100 px-3 py-1 text-xs font-medium text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300"
+      class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-semibold"
     >
       Live
     </span>
@@ -19,20 +21,22 @@
 
   {% if insights %}
 
-  <div class="grid gap-4">
+  <div class="space-y-4">
     {% for insight in insights %}
 
     <div
-      class="flex items-start gap-3 rounded-2xl border border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 p-4 transition hover:bg-slate-100 dark:hover:bg-slate-700"
+      class="border rounded-2xl p-4 bg-slate-50 hover:bg-slate-100 transition"
     >
-      <div
-        class="mt-1 flex h-8 w-8 items-center justify-center rounded-full bg-indigo-100 text-indigo-700 dark:bg-indigo-900/40 dark:text-indigo-300"
-      >
-        💡
-      </div>
+      <div class="flex gap-4">
+        <div
+          class="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center text-xl"
+        >
+          💡
+        </div>
 
-      <div class="flex-1">
-        <p class="leading-relaxed">{{ insight }}</p>
+        <div class="flex-1">
+          <p class="leading-7 text-gray-700">{{ insight }}</p>
+        </div>
       </div>
     </div>
 
@@ -41,48 +45,50 @@
 
   {% else %}
 
-  <div
-    class="rounded-2xl border border-dashed border-slate-300 dark:border-slate-700 p-10 text-center"
-  >
-    <div class="space-y-3">
-      <div class="text-5xl">📊</div>
+  <div class="text-center py-12">
+    <div class="text-6xl mb-4">📈</div>
 
-      <h3 class="text-lg font-semibold">No Insights Available</h3>
+    <h3 class="text-xl font-bold">No Insights Yet</h3>
 
-      <p class="text-slate-500 dark:text-slate-400">
-        Add some expenses to unlock personalized financial insights.
-      </p>
-    </div>
+    <p class="text-gray-500 mt-2">
+      Add some expenses to generate spending insights.
+    </p>
   </div>
 
   {% endif %}
 </section>
 
-<!-- AI INSIGHTS -->
+<!-- ================= AI INSIGHTS ================= -->
 
-<section class="bg-white dark:bg-slate-900 rounded-3xl shadow p-6 animate-card">
-  <div class="flex items-center justify-between gap-4 mb-5">
+<section class="bg-white rounded-3xl shadow p-6 mt-8">
+  <div class="flex items-center justify-between mb-6">
     <div>
-      <h2 class="text-xl font-bold flex items-center gap-2">🤖 AI Insights</h2>
+      <h2 class="text-2xl font-bold flex items-center gap-2">🤖 AI Insights</h2>
 
-      <p class="text-sm text-slate-500 dark:text-slate-400">
-        Personalized financial advice powered by Gemini AI.
+      <p class="text-gray-500 text-sm mt-1">
+        Personalized financial suggestions powered by Gemini AI.
       </p>
     </div>
 
     <button
       id="generateAiBtn"
-      class="rounded-xl bg-indigo-600 px-5 py-2 text-white transition hover:bg-indigo-700 disabled:opacity-50"
+      class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-xl font-semibold transition"
     >
       Generate
     </button>
   </div>
 
-  <div id="aiInsightsBox" class="space-y-3">
+  <div id="aiInsightsBox">
     <div
-      class="rounded-xl border border-dashed border-slate-300 dark:border-slate-700 p-6 text-center text-slate-500 dark:text-slate-400"
+      class="border-2 border-dashed rounded-2xl py-10 text-center text-gray-500"
     >
-      Click <strong>Generate</strong> to receive AI-powered financial analysis.
+      <div class="text-5xl mb-4">🤖</div>
+
+      <p>
+        Click
+        <strong>Generate</strong>
+        to receive AI-powered financial analysis.
+      </p>
     </div>
   </div>
 </section>

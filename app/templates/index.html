@@ -1,88 +1,143 @@
-<section class="bg-white dark:bg-slate-900 rounded-3xl shadow p-6 animate-card">
-  <div class="flex items-center justify-between mb-5">
-    <div>
-      <h2 class="text-xl font-bold flex items-center gap-2">
-        🧠 Smart Insights
-      </h2>
+{% extends "base.html" %} {% block title %}ExpenseIQ Dashboard{% endblock %} {%
+block content %}
 
-      <p class="text-sm text-slate-500 dark:text-slate-400">
-        Automatically generated from your spending habits.
+<!-- Hero -->
+
+<section
+  class="mb-8 rounded-3xl bg-gradient-to-r from-indigo-600 to-blue-600 text-white p-8 shadow-lg"
+>
+  <div class="flex flex-col lg:flex-row justify-between items-center gap-6">
+    <div>
+      <h1 class="text-4xl font-bold">Welcome to ExpenseIQ</h1>
+
+      <p class="mt-3 text-white/80">
+        Track expenses, visualize spending and get AI powered insights.
       </p>
     </div>
 
-    <span
-      class="rounded-full bg-emerald-100 px-3 py-1 text-xs font-medium text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300"
-    >
-      Live
-    </span>
+    <div class="grid grid-cols-2 gap-4">
+      <div class="bg-white/10 rounded-2xl p-5">
+        <p class="text-sm text-white/70">Expenses</p>
+
+        <h2 class="text-3xl font-bold">{{ expenses|length }}</h2>
+      </div>
+
+      <div class="bg-white/10 rounded-2xl p-5">
+        <p class="text-sm text-white/70">Insights</p>
+
+        <h2 class="text-3xl font-bold">{{ insights|length }}</h2>
+      </div>
+    </div>
   </div>
+</section>
 
-  {% if insights %}
+<!-- Main -->
 
-  <div class="grid gap-4">
-    {% for insight in insights %}
+<div class="grid lg:grid-cols-3 gap-8">
+  <!-- Left -->
 
-    <div
-      class="flex items-start gap-3 rounded-2xl border border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 p-4 transition hover:bg-slate-100 dark:hover:bg-slate-700"
-    >
-      <div
-        class="mt-1 flex h-8 w-8 items-center justify-center rounded-full bg-indigo-100 text-indigo-700 dark:bg-indigo-900/40 dark:text-indigo-300"
+  <div>
+    <div class="bg-white rounded-3xl shadow p-6">
+      <h2 class="text-xl font-bold mb-5">Add Expense</h2>
+
+      <form
+        action="{{ url_for('expense.create_expense') }}"
+        method="POST"
+        class="space-y-4"
       >
-        💡
+        <input
+          type="number"
+          name="amount"
+          required
+          placeholder="Amount"
+          class="w-full border rounded-xl px-4 py-3"
+        />
+
+        <select
+          id="categorySelect"
+          name="category"
+          class="w-full border rounded-xl px-4 py-3"
+        >
+          <option value="">Select Category</option>
+          <option value="food">Food</option>
+          <option value="travel">Travel</option>
+          <option value="shopping">Shopping</option>
+          <option value="health">Health</option>
+          <option value="bills">Bills</option>
+          <option value="entertainment">Entertainment</option>
+          <option value="custom">Custom Category</option>
+        </select>
+
+        <input
+          id="customCategory"
+          type="text"
+          name="custom_category"
+          placeholder="Custom Category"
+          class="hidden w-full border rounded-xl px-4 py-3"
+        />
+
+        <input
+          type="text"
+          name="description"
+          placeholder="Description"
+          class="w-full border rounded-xl px-4 py-3"
+        />
+
+        <input
+          type="date"
+          name="date"
+          class="w-full border rounded-xl px-4 py-3"
+        />
+
+        <button
+          type="submit"
+          class="w-full bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl py-3 font-semibold"
+        >
+          Add Expense
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Right -->
+
+  <div class="lg:col-span-2 space-y-8">
+    <div class="grid md:grid-cols-2 gap-6">
+      <div class="bg-white rounded-3xl shadow p-6">
+        <h2 class="font-bold text-xl mb-4">Expense Distribution</h2>
+
+        <img
+          src="{{ url_for('static', filename='pie_chart.png') }}"
+          alt="Pie Chart"
+          class="w-full"
+        />
       </div>
 
-      <div class="flex-1">
-        <p class="leading-relaxed">{{ insight }}</p>
+      <div class="bg-white rounded-3xl shadow p-6">
+        <h2 class="font-bold text-xl mb-4">Spending Trend</h2>
+
+        <img
+          src="{{ url_for('static', filename='line_chart.png') }}"
+          alt="Line Chart"
+          class="w-full"
+        />
       </div>
     </div>
 
-    {% endfor %}
+    {% include "components/insights.html" %}
+  </div>
+</div>
+
+<!-- Expense Table -->
+
+<section class="mt-10 bg-white rounded-3xl shadow p-6">
+  <div class="flex justify-between items-center mb-6">
+    <h2 class="text-2xl font-bold">Recent Expenses</h2>
+
+    <span class="text-gray-500"> {{ expenses|length }} Records </span>
   </div>
 
-  {% else %}
-
-  <div
-    class="rounded-2xl border border-dashed border-slate-300 dark:border-slate-700 p-10 text-center"
-  >
-    <div class="space-y-3">
-      <div class="text-5xl">📊</div>
-
-      <h3 class="text-lg font-semibold">No Insights Available</h3>
-
-      <p class="text-slate-500 dark:text-slate-400">
-        Add some expenses to unlock personalized financial insights.
-      </p>
-    </div>
-  </div>
-
-  {% endif %}
+  {% include "components/expense_table.html" %}
 </section>
 
-<!-- AI INSIGHTS -->
-
-<section class="bg-white dark:bg-slate-900 rounded-3xl shadow p-6 animate-card">
-  <div class="flex items-center justify-between gap-4 mb-5">
-    <div>
-      <h2 class="text-xl font-bold flex items-center gap-2">🤖 AI Insights</h2>
-
-      <p class="text-sm text-slate-500 dark:text-slate-400">
-        Personalized financial advice powered by Gemini AI.
-      </p>
-    </div>
-
-    <button
-      id="generateAiBtn"
-      class="rounded-xl bg-indigo-600 px-5 py-2 text-white transition hover:bg-indigo-700 disabled:opacity-50"
-    >
-      Generate
-    </button>
-  </div>
-
-  <div id="aiInsightsBox" class="space-y-3">
-    <div
-      class="rounded-xl border border-dashed border-slate-300 dark:border-slate-700 p-6 text-center text-slate-500 dark:text-slate-400"
-    >
-      Click <strong>Generate</strong> to receive AI-powered financial analysis.
-    </div>
-  </div>
-</section>
+{% endblock %}

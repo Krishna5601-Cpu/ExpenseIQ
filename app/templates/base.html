@@ -9,59 +9,52 @@
     <link
       rel="icon"
       type="image/png"
-      href="{{ url_for('static', filename='images/favicon.png') }}"
+      href="{{ url_for('static', filename='favicon.png') }}"
     />
+
+    <!-- Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
 
     <script>
       tailwind.config = {
         darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              primary: "#4f46e5",
+            },
+          },
+        },
       };
     </script>
-
-    <script src="https://cdn.tailwindcss.com"></script>
 
     {% block head %}{% endblock %}
   </head>
 
   <body
-    class="min-h-screen bg-slate-100 text-slate-800 dark:bg-slate-950 dark:text-slate-100 transition-colors duration-300"
+    class="bg-slate-100 min-h-screen text-slate-800 transition-colors duration-300"
   >
-    <!-- NAVBAR -->
-
     {% include "components/navbar.html" %}
 
-    <!-- ================= CONTENT ================= -->
-
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+    <main class="max-w-7xl mx-auto px-4 py-8">
       {% block content %}{% endblock %}
     </main>
 
-    <!-- FOOTER -->
-
-    <footer class="border-t border-slate-200 dark:border-slate-800 py-6 mt-10">
+    <footer class="mt-12 border-t bg-white">
       <div
-        class="max-w-7xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-3"
+        class="max-w-7xl mx-auto px-4 py-6 flex flex-col md:flex-row justify-between items-center gap-2"
       >
         <div>
-          <h3 class="font-semibold">ExpenseIQ</h3>
+          <h3 class="font-bold text-lg">ExpenseIQ</h3>
 
-          <p class="text-sm text-slate-500 dark:text-slate-400">
-            Track smarter. Spend wiser.
-          </p>
+          <p class="text-gray-500 text-sm">AI Powered Expense Tracker</p>
         </div>
 
-        <div class="text-sm text-slate-500 dark:text-slate-400">
-          © {{ current_year | default(2026) }} ExpenseIQ
-        </div>
+        <div class="text-sm text-gray-500">© 2026 ExpenseIQ</div>
       </div>
     </footer>
 
-    <!-- SCRIPTS -->
-
-    <script
-      src="{{ url_for('static', filename='js/scripts.js') }}"
-      defer
-    ></script>
+    <script src="{{ url_for('static', filename='scripts.js') }}" defer></script>
 
     {% block scripts %}{% endblock %}
   </body>

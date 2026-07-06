@@ -1,50 +1,60 @@
 {% if expenses %}
 
-<div class="overflow-x-auto rounded-2xl">
-  <table class="w-full min-w-[700px]">
+<div class="overflow-x-auto">
+  <table class="min-w-full">
     <thead>
-      <tr class="border-b border-slate-200 dark:border-slate-800 text-left">
-        <th class="py-3 px-2">Amount</th>
-        <th class="py-3 px-2">Category</th>
-        <th class="py-3 px-2">Description</th>
-        <th class="py-3 px-2">Date</th>
-        <th class="py-3 px-2 text-center">Actions</th>
+      <tr class="border-b">
+        <th class="text-left px-4 py-3 font-semibold">Amount</th>
+
+        <th class="text-left px-4 py-3 font-semibold">Category</th>
+
+        <th class="text-left px-4 py-3 font-semibold">Description</th>
+
+        <th class="text-left px-4 py-3 font-semibold">Date</th>
+
+        <th class="text-center px-4 py-3 font-semibold">Actions</th>
       </tr>
     </thead>
 
     <tbody>
       {% for expense in expenses %}
 
-      <tr
-        class="border-b border-slate-100 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 transition"
-      >
-        <td class="py-4 px-2 font-semibold whitespace-nowrap">
+      <tr class="border-b hover:bg-gray-50 transition">
+        <td class="px-4 py-4 font-semibold text-indigo-600">
           ₹{{ expense.amount }}
         </td>
 
-        <td class="py-4 px-2">
+        <td class="px-4 py-4">
+          {% set colors = { "food":"bg-green-100 text-green-700",
+          "travel":"bg-blue-100 text-blue-700", "shopping":"bg-pink-100
+          text-pink-700", "health":"bg-red-100 text-red-700",
+          "bills":"bg-yellow-100 text-yellow-700",
+          "entertainment":"bg-purple-100 text-purple-700" } %}
+
           <span
-            class="inline-flex items-center rounded-full bg-indigo-100 dark:bg-indigo-900/40 px-3 py-1 text-sm font-medium text-indigo-700 dark:text-indigo-300 capitalize"
+            class="px-3 py-1 rounded-full text-sm font-medium
+                        {{ colors.get(expense.category|lower,
+                        'bg-gray-100 text-gray-700') }}"
           >
             {{ expense.category }}
           </span>
         </td>
 
-        <td
-          class="py-4 px-2 text-slate-500 dark:text-slate-400 max-w-xs break-words"
-        >
-          {{ expense.description or "-" }}
+        <td class="px-4 py-4 text-gray-600">
+          {% if expense.description %} {{ expense.description }} {% else %} — {%
+          endif %}
         </td>
 
-        <td class="py-4 px-2 whitespace-nowrap">
-          {{ expense.date.strftime("%d %b %Y") }}
+        <td class="px-4 py-4">
+          {% if expense.date.strftime is defined %} {{ expense.date.strftime("%d
+          %b %Y") }} {% else %} {{ expense.date }} {% endif %}
         </td>
 
-        <td class="py-4 px-2">
-          <div class="flex items-center justify-center gap-3">
+        <td class="px-4 py-4">
+          <div class="flex justify-center gap-2">
             <a
               href="{{ url_for('expense.edit_page', expense_id=expense.id) }}"
-              class="rounded-lg bg-blue-100 px-3 py-1 text-sm font-medium text-blue-700 transition hover:bg-blue-200 dark:bg-blue-900/30 dark:text-blue-300 dark:hover:bg-blue-900/50"
+              class="px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition"
             >
               Edit
             </a>
@@ -52,7 +62,7 @@
             <a
               href="{{ url_for('expense.delete_expense', expense_id=expense.id) }}"
               onclick="return confirm('Delete this expense?');"
-              class="rounded-lg bg-red-100 px-3 py-1 text-sm font-medium text-red-700 transition hover:bg-red-200 dark:bg-red-900/30 dark:text-red-300 dark:hover:bg-red-900/50"
+              class="px-4 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700 transition"
             >
               Delete
             </a>
@@ -67,18 +77,14 @@
 
 {% else %}
 
-<div
-  class="rounded-2xl border border-dashed border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 p-12 text-center"
->
-  <div class="space-y-2">
-    <div class="text-5xl">💸</div>
+<div class="py-16 text-center">
+  <div class="text-6xl mb-4">💸</div>
 
-    <h3 class="text-xl font-semibold">No Expenses Yet</h3>
+  <h2 class="text-2xl font-bold mb-2">No Expenses Found</h2>
 
-    <p class="text-slate-500 dark:text-slate-400">
-      Add your first expense to start tracking your spending.
-    </p>
-  </div>
+  <p class="text-gray-500">
+    Add your first expense to start tracking your spending.
+  </p>
 </div>
 
 {% endif %}
