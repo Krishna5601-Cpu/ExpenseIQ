@@ -59,7 +59,8 @@ class Config:
 
     # Chart Output
 
-    CHART_FOLDER: Path = BASE_DIR / "static"
+    CHART_FOLDER = BASE_DIR / "app" / "static"
+    CHART_FOLDER.mkdir(parents=True, exist_ok=True)
 
     # Application
 
