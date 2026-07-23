@@ -1,133 +1,131 @@
 "use strict";
 
-/* ==========================================================
-   ExpenseIQ Frontend
-========================================================== */
-
 document.addEventListener("DOMContentLoaded", () => {
-  initializeDarkMode();
+  initializeTheme();
   initializeMobileMenu();
   initializeCategoryToggle();
   initializeAIInsights();
 });
 
-/* ==========================================================
-   Dark Mode
-========================================================== */
+/* ==========================================
+   DARK MODE
+========================================== */
 
-function initializeDarkMode() {
+function initializeTheme() {
   const html = document.documentElement;
 
   const desktopBtn = document.getElementById("darkModeBtn");
   const mobileBtn = document.getElementById("darkModeBtnMobile");
 
+  // Load saved theme
   const savedTheme = localStorage.getItem("theme");
 
   if (savedTheme === "dark") {
     html.classList.add("dark");
+  } else {
+    html.classList.remove("dark");
+  }
+
+  function updateIcons() {
+    const dark = html.classList.contains("dark");
+
+    if (desktopBtn) {
+      desktopBtn.innerHTML = dark ? "☀️" : "🌙";
+    }
+
+    if (mobileBtn) {
+      mobileBtn.innerHTML = dark ? "☀️" : "🌙";
+    }
   }
 
   function toggleTheme() {
-    html.classList.toggle("dark");
+    if (html.classList.contains("dark")) {
+      html.classList.remove("dark");
+      localStorage.setItem("theme", "light");
+    } else {
+      html.classList.add("dark");
+      localStorage.setItem("theme", "dark");
+    }
 
-    localStorage.setItem(
-      "theme",
-      html.classList.contains("dark")
-        ? "dark"
-        : "light"
-    );
+    updateIcons();
   }
 
   desktopBtn?.addEventListener("click", toggleTheme);
   mobileBtn?.addEventListener("click", toggleTheme);
+
+  updateIcons();
 }
 
-/* ==========================================================
-   Mobile Navigation
-========================================================== */
+/* ==========================================
+   MOBILE MENU
+========================================== */
 
 function initializeMobileMenu() {
+  const menuBtn = document.getElementById("menuBtn");
+  const mobileMenu = document.getElementById("mobileMenu");
 
-  const button = document.getElementById("menuBtn");
-  const menu = document.getElementById("mobileMenu");
+  if (!menuBtn || !mobileMenu) return;
 
-  if (!button || !menu) return;
+  menuBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
 
-  button.addEventListener("click", () => {
-    menu.classList.toggle("hidden");
+    mobileMenu.classList.toggle("hidden");
   });
 
-  document.addEventListener("click", (event) => {
-
-    if (
-      !menu.contains(event.target) &&
-      !button.contains(event.target)
-    ) {
-      menu.classList.add("hidden");
+  document.addEventListener("click", (e) => {
+    if (!mobileMenu.contains(e.target) && !menuBtn.contains(e.target)) {
+      mobileMenu.classList.add("hidden");
     }
-
   });
-
 }
 
-/* ==========================================================
-   Category Toggle
-========================================================== */
+/* ==========================================
+   CUSTOM CATEGORY
+========================================== */
 
 function initializeCategoryToggle() {
+  const categorySelect = document.getElementById("categorySelect");
+  const customCategory = document.getElementById("customCategory");
 
-  const category = document.getElementById("categorySelect");
-  const custom = document.getElementById("customCategory");
+  if (!categorySelect || !customCategory) return;
 
-  if (!category || !custom) return;
-
-  function update() {
-
-    if (category.value === "custom") {
-
-      custom.classList.remove("hidden");
-      custom.required = true;
-
+  function updateCategory() {
+    if (categorySelect.value === "custom") {
+      customCategory.classList.remove("hidden");
+      customCategory.required = true;
     } else {
-
-      custom.classList.add("hidden");
-      custom.required = false;
-      custom.value = "";
-
+      customCategory.classList.add("hidden");
+      customCategory.required = false;
+      customCategory.value = "";
     }
-
   }
 
-  update();
+  categorySelect.addEventListener("change", updateCategory);
 
-  category.addEventListener("change", update);
-
+  updateCategory();
 }
 
-/* ==========================================================
-   AI Insights
-========================================================== */
+/* ==========================================
+   AI INSIGHTS
+========================================== */
 
 function initializeAIInsights() {
-
   const button = document.getElementById("generateAiBtn");
-  const container = document.getElementById("aiInsightsBox");
+  const box = document.getElementById("aiInsightsBox");
 
-  if (!button || !container) return;
+  if (!button || !box) return;
 
   button.addEventListener("click", async () => {
-
     button.disabled = true;
-    button.innerText = "Generating...";
+    button.textContent = "Generating...";
 
-    container.innerHTML = `
-            <div class="text-center py-10 text-gray-500">
-                🤖 Thinking...
+    box.innerHTML = `
+            <div class="text-center py-8 text-gray-500 dark:text-slate-400">
+                🤖 Generating AI insights...
             </div>
         `;
 
     try {
-
       const response = await fetch("/ai-insights");
 
       if (!response.ok) {
@@ -137,58 +135,36 @@ function initializeAIInsights() {
       const data = await response.json();
 
       if (!data.insights || data.insights.length === 0) {
-
-        container.innerHTML = `
-                    <div class="text-center py-8 text-gray-500">
-                        No insights generated.
+        box.innerHTML = `
+                    <div class="text-center py-8 text-gray-500 dark:text-slate-400">
+                        No insights available.
                     </div>
                 `;
-
       } else {
-
-        container.innerHTML = data.insights.map(insight => `
-                    <div
-                        class="border rounded-2xl p-4 mb-4 bg-slate-50"
-                    >
+        box.innerHTML = data.insights
+          .map(
+            (item) => `
+                    <div class="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-4 mb-4 shadow">
                         <div class="flex gap-3">
-
-                            <div class="text-2xl">
-                                💡
-                            </div>
-
-                            <div>
-                                ${insight}
-                            </div>
-
+                            <span class="text-xl">💡</span>
+                            <p>${item}</p>
                         </div>
                     </div>
-                `).join("");
-
+                `,
+          )
+          .join("");
       }
-
-    }
-
-    catch (error) {
-
+    } catch (error) {
       console.error(error);
 
-      container.innerHTML = `
-                <div
-                    class="rounded-xl bg-red-100 text-red-700 p-4"
-                >
+      box.innerHTML = `
+                <div class="bg-red-100 text-red-700 rounded-xl p-4">
                     Failed to generate AI insights.
                 </div>
             `;
-
-    }
-
-    finally {
-
+    } finally {
       button.disabled = false;
-      button.innerText = "Generate";
-
+      button.textContent = "Generate AI Insights";
     }
-
   });
-
 }
