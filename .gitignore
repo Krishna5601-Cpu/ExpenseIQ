@@ -52,3 +52,5 @@ Thumbs.db
 
 app/static/pie_chart.png
 app/static/line_chart.png
+
+budgets.json

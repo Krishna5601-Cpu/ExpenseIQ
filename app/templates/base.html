@@ -13,8 +13,6 @@
     />
 
     <!-- Tailwind -->
-    <script src="https://cdn.tailwindcss.com"></script>
-
     <script>
       tailwind.config = {
         darkMode: "class",
@@ -28,11 +26,13 @@
       };
     </script>
 
+    <script src="https://cdn.tailwindcss.com"></script>
+
     {% block head %}{% endblock %}
   </head>
 
   <body
-    class="bg-slate-100 min-h-screen text-slate-800 transition-colors duration-300"
+    class="min-h-screen bg-slate-100 text-slate-800 transition-colors duration-300 dark:bg-slate-900 dark:text-slate-100"
   >
     {% include "components/navbar.html" %}
 
