@@ -1,29 +1,27 @@
 {% extends "base.html" %} {% block title %}Budget Planner{% endblock %} {% block
 content %}
 
-<!-- ================= HERO ================= -->
-
 <section
-  class="mb-8 rounded-3xl bg-gradient-to-r from-emerald-600 to-teal-600 text-white p-8 shadow-lg"
+  class="mb-8 rounded-3xl bg-gradient-to-r from-emerald-600 to-teal-600 text-white p-8 shadow-xl"
 >
-  <div class="flex flex-col lg:flex-row justify-between items-center gap-6">
+  <div class="flex flex-col lg:flex-row justify-between items-center gap-8">
     <div>
       <h1 class="text-4xl font-bold">Budget Planner</h1>
 
-      <p class="mt-3 text-white/80">
-        Set monthly budgets and keep your spending under control.
+      <p class="mt-3 text-emerald-100">
+        Set monthly budgets and stay in complete control of your spending.
       </p>
     </div>
 
     <div class="grid grid-cols-2 gap-4">
-      <div class="bg-white/10 rounded-2xl p-5">
-        <p class="text-sm text-white/70">Overall Budget</p>
+      <div class="rounded-2xl bg-white/10 backdrop-blur p-5 text-center">
+        <p class="text-sm text-emerald-100">Overall Budget</p>
 
         <h2 class="text-3xl font-bold">₹{{ budgets.overall }}</h2>
       </div>
 
-      <div class="bg-white/10 rounded-2xl p-5">
-        <p class="text-sm text-white/70">Categories</p>
+      <div class="rounded-2xl bg-white/10 backdrop-blur p-5 text-center">
+        <p class="text-sm text-emerald-100">Categories</p>
 
         <h2 class="text-3xl font-bold">{{ budgets.categories|length }}</h2>
       </div>
@@ -31,12 +29,12 @@ content %}
   </div>
 </section>
 
-<!-- ================= CONTENT ================= -->
-
 <div class="grid lg:grid-cols-2 gap-8">
-  <!-- Form -->
+  <!-- FORM -->
 
-  <div class="bg-white rounded-3xl shadow p-6">
+  <div
+    class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-3xl shadow-lg p-6 transition-colors"
+  >
     <h2 class="text-2xl font-bold mb-6">Monthly Budget</h2>
 
     <form
@@ -45,13 +43,13 @@ content %}
       class="space-y-5"
     >
       <div>
-        <label class="block font-medium mb-2"> Overall Budget </label>
+        <label class="block mb-2 font-semibold"> Overall Budget </label>
 
         <input
           type="number"
           name="overall"
           value="{{ budgets.overall }}"
-          class="w-full border rounded-xl px-4 py-3"
+          class="w-full rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 px-4 py-3 outline-none focus:ring-2 focus:ring-emerald-500"
         />
       </div>
 
@@ -59,7 +57,7 @@ content %}
       ["food","travel","shopping","health","bills","entertainment"] %}
 
       <div>
-        <label class="block font-medium mb-2 capitalize">
+        <label class="block mb-2 font-semibold capitalize">
           {{ category }}
         </label>
 
@@ -67,24 +65,26 @@ content %}
           type="number"
           name="{{ category }}"
           value="{{ budgets.categories.get(category,0) }}"
-          class="w-full border rounded-xl px-4 py-3"
+          class="w-full rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 px-4 py-3 outline-none focus:ring-2 focus:ring-emerald-500"
         />
       </div>
 
       {% endfor %}
 
       <button
-        class="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-3 rounded-xl font-semibold transition"
+        class="w-full rounded-xl bg-emerald-600 hover:bg-emerald-700 py-3 font-semibold text-white transition"
       >
         Save Budget
       </button>
     </form>
   </div>
 
-  <!-- Overview -->
+  <!-- OVERVIEW -->
 
   <div class="space-y-6">
-    <div class="bg-white rounded-3xl shadow p-6">
+    <div
+      class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-3xl shadow-lg p-6 transition-colors"
+    >
       <h2 class="text-2xl font-bold mb-6">Budget Allocation</h2>
 
       {% for category, amount in budgets.categories.items() %}
@@ -93,30 +93,37 @@ content %}
         <div class="flex justify-between mb-2">
           <span class="capitalize"> {{ category }} </span>
 
-          <span> ₹{{ amount }} </span>
+          <span class="font-semibold"> ₹{{ amount }} </span>
         </div>
 
-        <div class="w-full h-3 bg-gray-200 rounded-full overflow-hidden">
-          <div class="bg-emerald-500 h-full" style="width: 100%"></div>
+        <div
+          class="h-3 w-full overflow-hidden rounded-full bg-slate-200 dark:bg-slate-700"
+        >
+          <div
+            class="h-full rounded-full bg-emerald-500"
+            style="width: 100%"
+          ></div>
         </div>
       </div>
 
       {% endfor %}
     </div>
 
-    <div class="bg-white rounded-3xl shadow p-6">
+    <div
+      class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-3xl shadow-lg p-6 transition-colors"
+    >
       <h2 class="text-2xl font-bold mb-5">Budget Tips</h2>
 
-      <ul class="space-y-4 text-gray-600">
+      <ul class="space-y-4 text-slate-600 dark:text-slate-300">
         <li>💰 Save before you spend.</li>
 
-        <li>🍔 Keep food expenses below 30% of income.</li>
+        <li>🍔 Keep food expenses below 30% of your income.</li>
 
         <li>📊 Review your expenses every week.</li>
 
         <li>🎯 Adjust category budgets monthly.</li>
 
-        <li>🚀 Increase savings gradually every month.</li>
+        <li>🚀 Increase your savings gradually every month.</li>
       </ul>
     </div>
   </div>
