@@ -2,25 +2,27 @@
 content %}
 
 <section class="max-w-3xl mx-auto">
-  <!-- Header -->
+  <!-- HERO -->
 
   <div
-    class="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-3xl p-8 text-white shadow-lg mb-8"
+    class="mb-8 rounded-3xl bg-gradient-to-r from-indigo-600 to-blue-600 p-8 text-white shadow-xl"
   >
-    <p class="uppercase tracking-widest text-sm text-blue-100">
+    <p class="text-sm uppercase tracking-[0.3em] text-indigo-100">
       Expense Management
     </p>
 
-    <h1 class="text-4xl font-bold mt-2">Edit Expense</h1>
+    <h1 class="mt-2 text-4xl font-bold">Edit Expense</h1>
 
-    <p class="mt-3 text-blue-100">
+    <p class="mt-3 text-indigo-100">
       Update your expense details and keep your records accurate.
     </p>
   </div>
 
-  <!-- Form Card -->
+  <!-- CARD -->
 
-  <div class="bg-white rounded-3xl shadow-lg p-8">
+  <div
+    class="rounded-3xl border border-slate-200 bg-white p-8 shadow-lg transition-colors dark:border-slate-700 dark:bg-slate-800"
+  >
     <form
       action="{{ url_for('expense.update_expense', expense_id=expense.id) }}"
       method="POST"
@@ -29,9 +31,7 @@ content %}
       <!-- Amount -->
 
       <div>
-        <label for="amount" class="block mb-2 font-semibold text-gray-700">
-          Amount
-        </label>
+        <label for="amount" class="mb-2 block font-semibold"> Amount </label>
 
         <input
           id="amount"
@@ -39,25 +39,27 @@ content %}
           type="number"
           value="{{ expense.amount }}"
           required
-          class="w-full rounded-xl border border-gray-300 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          class="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 outline-none transition focus:ring-2 focus:ring-indigo-500 dark:border-slate-600 dark:bg-slate-900"
         />
       </div>
 
       <!-- Category -->
 
       <div>
-        <label for="category" class="block mb-2 font-semibold text-gray-700">
+        <label for="category" class="mb-2 block font-semibold">
           Category
         </label>
+
+        {% set categories = [ "food", "travel", "shopping", "health", "bills",
+        "entertainment" ] %}
 
         <select
           id="category"
           name="category"
           required
-          class="w-full rounded-xl border border-gray-300 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          class="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 outline-none transition focus:ring-2 focus:ring-indigo-500 dark:border-slate-600 dark:bg-slate-900"
         >
-          {% set categories = [ "food", "travel", "shopping", "health", "bills",
-          "entertainment" ] %} {% for category in categories %}
+          {% for category in categories %}
 
           <option
             value="{{ category }}"
@@ -65,9 +67,7 @@ content %}
             if
             expense.category|lower=""
             ="category"
-            %}
-            selected
-            {%
+            %}selected{%
             endif
             %}
           >
@@ -81,7 +81,7 @@ content %}
       <!-- Description -->
 
       <div>
-        <label for="description" class="block mb-2 font-semibold text-gray-700">
+        <label for="description" class="mb-2 block font-semibold">
           Description
         </label>
 
@@ -89,7 +89,7 @@ content %}
           id="description"
           name="description"
           rows="4"
-          class="w-full rounded-xl border border-gray-300 px-4 py-3 resize-none focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          class="w-full resize-none rounded-xl border border-slate-300 bg-white px-4 py-3 outline-none transition focus:ring-2 focus:ring-indigo-500 dark:border-slate-600 dark:bg-slate-900"
         >
 {{ expense.description }}</textarea
         >
@@ -98,9 +98,7 @@ content %}
       <!-- Date -->
 
       <div>
-        <label for="date" class="block mb-2 font-semibold text-gray-700">
-          Date
-        </label>
+        <label for="date" class="mb-2 block font-semibold"> Date </label>
 
         <input
           id="date"
@@ -108,23 +106,23 @@ content %}
           type="date"
           value="{{ expense.date }}"
           required
-          class="w-full rounded-xl border border-gray-300 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          class="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 outline-none transition focus:ring-2 focus:ring-indigo-500 dark:border-slate-600 dark:bg-slate-900"
         />
       </div>
 
       <!-- Buttons -->
 
-      <div class="flex flex-col sm:flex-row gap-4 pt-4">
+      <div class="flex flex-col gap-4 pt-2 sm:flex-row">
         <button
           type="submit"
-          class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white py-3 rounded-xl font-semibold transition"
+          class="flex-1 rounded-xl bg-indigo-600 py-3 font-semibold text-white transition hover:bg-indigo-700"
         >
           💾 Save Changes
         </button>
 
         <a
           href="{{ url_for('main.home') }}"
-          class="flex-1 text-center border border-gray-300 hover:bg-gray-100 py-3 rounded-xl font-semibold transition"
+          class="flex-1 rounded-xl border border-slate-300 py-3 text-center font-semibold transition hover:bg-slate-100 dark:border-slate-600 dark:hover:bg-slate-700"
         >
           Cancel
         </a>
