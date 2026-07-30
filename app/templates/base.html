@@ -12,22 +12,19 @@
       href="{{ url_for('static', filename='favicon.png') }}"
     />
 
+    <script src="https://cdn.tailwindcss.com"></script>
     <script>
-      tailwind = {
-        config: {
-          darkMode: "class",
-          theme: {
-            extend: {
-              colors: {
-                primary: "#4f46e5",
-              },
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              primary: "#4f46e5",
             },
           },
         },
       };
     </script>
-
-    <script src="https://cdn.tailwindcss.com"></script>
 
     {% block head %}{% endblock %}
   </head>
