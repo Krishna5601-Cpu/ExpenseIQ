@@ -1,24 +1,32 @@
-"""
-AI service.
-
-Generates AI-powered financial insights using Google Gemini.
-"""
-
 from __future__ import annotations
 
 import json
 import logging
-
+from pydantic import BaseModel, Field
 from flask import current_app
 from google import genai
+from google.genai import types
 
 from app.models import Expense
 
 logger = logging.getLogger(__name__)
 
 
+# Schema for structured output enforcing 4 insights
+class InsightsResponse(BaseModel):
+    insights: list[str] = Field(
+        ...,
+        min_items=4,
+        max_items=4,
+        description="Exactly four detailed financial insights.",
+    )
+
+
 class AIService:
     """Service responsible for AI-generated financial insights."""
+
+    # Updated default model to Gemini 3 Flash Preview
+    DEFAULT_MODEL = "gemini-3-flash-preview"
 
     @staticmethod
     def _client() -> genai.Client | None:
@@ -46,9 +54,7 @@ class AIService:
         cls,
         expenses: list[Expense],
     ) -> list[str]:
-        """
-        Generate AI financial insights.
-        """
+        """Generate AI financial insights using Gemini 3 Flash Preview."""
 
         if not expenses:
             return ["No expenses available yet."]
@@ -58,71 +64,54 @@ class AIService:
         if client is None:
             return ["AI insights unavailable. Missing Gemini API key."]
 
+        model_name = current_app.config.get("GEMINI_MODEL", cls.DEFAULT_MODEL)
+
         system_prompt = """
-You are ExpenseIQ AI.
+You are ExpenseIQ AI, a professional financial advisor.
+Analyze the user's spending habits carefully and return EXACTLY 4 detailed insights.
 
-You are a professional financial advisor.
-
-Analyze the user's spending habits carefully.
-
-Return EXACTLY 4 detailed insights.
+Insight topics required:
+1. Overall spending trend
+2. Identified wasteful habit
+3. Concrete saving suggestion
+4. Future budget recommendation
 
 Rules:
-
-- Each insight should be 60-120 words.
-- Mention ₹ wherever applicable.
-- Explain WHY you reached the conclusion.
-- Give practical recommendations.
-- Mention spending patterns.
-- Mention categories if relevant.
-- Be motivational.
-- Do NOT use markdown.
-- Do NOT use headings.
-- Separate each insight using a blank line.
+- Each insight should be between 60-120 words.
+- Mention ₹ (INR) wherever applicable.
+- Explain WHY you reached each conclusion.
+- Provide clear, actionable recommendations.
+- Keep the tone encouraging and motivational.
+- Plain text only (no markdown, no bolding, no headers within individual insights).
 """
 
-        user_prompt = f"""
-Expense Data:
-
-{json.dumps(cls._prepare_data(expenses), indent=2)}
-
-Generate exactly four insights:
-
-1. Spending trend
-2. Wasteful habit
-3. Saving suggestion
-4. Budget recommendation
-"""
+        user_prompt = (
+            f"Expense Data:\n{json.dumps(cls._prepare_data(expenses), indent=2)}"
+        )
 
         try:
-            response = client.models.generate_content(
-                model=current_app.config["GEMINI_MODEL"],
-                contents=user_prompt,
-                config={
-                    "system_instruction": system_prompt,
-                    "temperature": 0.4,
-                    "max_output_tokens": 250,
-                },
+            # Configure structured output & thinking constraints for Gemini 3
+            config = types.GenerateContentConfig(
+                system_instruction=system_prompt,
+                temperature=0.4,
+                max_output_tokens=2000,
+                response_mime_type="application/json",
+                response_schema=InsightsResponse,
+                thinking_config=types.ThinkingConfig(
+                    thinking_budget=1024  # Controls Gemini 3 reasoning depth for fast throughput
+                ),
             )
 
-            text = response.text.strip()
+            response = client.models.generate_content(
+                model=model_name,
+                contents=user_prompt,
+                config=config,
+            )
 
-            insights = []
-
-            for line in text.splitlines():
-                cleaned = line.strip().lstrip("-*•1234567890. ").strip()
-
-                if cleaned:
-                    insights.append(cleaned)
-
-            if len(insights) == 1:
-                insights = [
-                    sentence.strip() for sentence in text.split(".") if sentence.strip()
-                ]
-
-            return insights[:4]
+            # Gemini outputs guaranteed JSON matching InsightsResponse schema
+            structured_data = json.loads(response.text)
+            return structured_data.get("insights", [])
 
         except Exception:
             logger.exception("Failed to generate AI insights.")
-
             return ["AI insights are temporarily unavailable."]
