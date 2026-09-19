@@ -173,7 +173,3 @@ Independent of AI, `AnalyticsService` computes:
 - Budget data is stored as JSON with atomic writes to avoid corruption on save.
 
 ---
-
-## 📄 License
-
-Add your license of choice here (e.g. MIT).
